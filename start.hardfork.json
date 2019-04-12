@@ -1,0 +1,301 @@
+{
+ "app_userx": [
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx3d6fdec031580eee203b62a859be0d59b028b5e8",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 0
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx22e13fa6bdd7fe452f6dec49c638108dcfa522e4",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 4
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxe9e903d8f733ce3262287f0a766c329cd7836982",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx9cbad5974f9705ca013dedd367d837f1e46107a3",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxd2c5453272d9170f807c1ba1b653ffffb6ecdeb3",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxf49ff1b7d48feeb424b45c09ec787a6fa98b4a94",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx3fb22f1bc065836e7f54692d512644344d1628cb",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxbb20f3b1c6c17d7641824c5b923f2914485b0173",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx2540cad08eb69a60c993059fa5593348a3f72ff5",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx60ca31e831ad87383e65a73de87d8aebe843e597",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxa7d513bdf4123f4fc6ca5304721889741b8897b8",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxacb3d9692bb92e24ed2c994c65b492e31b09eda2",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx887186a3505fcdfe83dfe79691edfad1aa0728a0",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx66f3cfd0af9693e53a9b75d03a8a2b23f0779866",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx4669a60d91648afd5d8d7e9f8fb7d2adfd2a6674",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx3c57a889ec01714f26477f3758ee3b5c08bcabd3",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx5a0efc960f27316800145e0ef34fbb68140d8779",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxb4218b41a3ce6dfab082859f15bcd4b98f375df4",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx676191f08d8fcf5a202efd88fd1faef65e064f79",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxa409004a55749aefe79e2925b9e96f6339a5de56",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx0800c941c5671ef4854e51935d3326daf93f740d",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx6cefe35e76792d2338752bac52fe38102c9d264c",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mxde0356813b67800c87e744c06e2b922649c2c957",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  },
+  {
+   "pub_key": "Mp09f3548f7f4fc38ad2d0d8f805ec2cc1e35696012f95b8c6f2749e304a91efa2",
+   "address": "Mx4f2c2267fc36167910934bfc3d5cffb95b555d7c",
+   "start": "2019-01-01T17:00:00Z",
+   "finish": "2119-04-02T17:00:00Z",
+   "commission": 3
+  }
+ ],
+
+     "coins": [
+      {
+        "name": "BTC.Secure Coin",
+        "symbol": "BTCSECURE",
+        "initial_amount_f32": 34893745.683603776117789541,
+        "constant_reserve_ratio": 50,
+        "initial_reserve_f32": 1352859.430924463507885068
+      },
+      {
+        "name": "CINEMACOIN",
+        "symbol": "CINEMACOIN",
+        "initial_amount_f32": 11131451.878758401613402296,
+        "constant_reserve_ratio": 20,
+        "initial_reserve_f32": 774.673143980449659869
+      },
+      {
+        "name": "crashcoin2",
+        "symbol": "CRASHCOIN2",
+        "initial_amount_f32": 2.511911549243618024,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 100010.000000000000165931
+      },
+      {
+        "name": "CREDITOR02",
+        "symbol": "CREDITOR02",
+        "initial_amount_f32": 1150904.581891396541414620,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4077.492683780760038823
+      },
+      {
+        "name": "CREDITOR03",
+        "symbol": "CREDITOR03",
+        "initial_amount_f32": 1127008.007292187311119358,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 3305.750077649801170423
+      },
+      {
+        "name": "creditor04",
+        "symbol": "CREDITOR04",
+        "initial_amount_f32": 1159961.507441308263943527,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4409.971440119734991275
+      },
+      {
+        "name": "CREDITOR1",
+        "symbol": "CREDITOR1",
+        "initial_amount_f32": 1266959.447918532200550153,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 10656.808082423660118139
+      },
+      {
+        "name": "CrocodileCoin",
+        "symbol": "CROCCOIN",
+        "initial_amount_f32": 26818600.571355818739614740,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 11539.000000000000000000
+      },
+      {
+        "name": "cyberpunk",
+        "symbol": "CYBERPUNK",
+        "initial_amount_f32": 586210.523328266515802152,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 73608.390143209125488731
+      },
+      {
+        "name": "ETHEREUM",
+        "symbol": "ETHEREUM",
+        "initial_amount_f32": 146.705161177491393480,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 461.800000000000000000
+      },
+      {
+        "name": "EVSCAPITAL",
+        "symbol": "EVSCAPITAL",
+        "initial_amount_f32": 1374.024913679970861322,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 23985.350751390567669338
+      },
+      {
+        "name": "Kamanero",
+        "symbol": "KAMANERO",
+        "initial_amount_f32": 100.000000000000000000,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 101.000000000000000000
+      },
+      {
+        "name": "Minter Coin",
+        "symbol": "MINTERC",
+        "initial_amount_f32": 2243803.861525085652718862,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 323481.099771421509978594
+      },
+      {
+        "name": "MoyaMoneta",
+        "symbol": "MOYMONA",
+        "initial_amount_f32": 1183368.711772469685725640,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 5385.187432708888863368
+      },
+      {
+        "name": "Rundax",
+        "symbol": "RUNDAX",
+        "initial_amount_f32": 1179114.267818269387749891,
+        "constant_reserve_ratio": 41,
+        "initial_reserve_f32": 149460.548627548580571026
+      },
+      {
+        "name": "sotoviK05",
+        "symbol": "SOTOVIK05",
+        "initial_amount_f32": 1162801.468247823283334850,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4519.139157602970069710
+      },
+      {
+        "name": "TESTCOIN01",
+        "symbol": "TESTCOIN01",
+        "initial_amount_f32": 1000.990009940159192996,
+        "constant_reserve_ratio": 50,
+        "initial_reserve_f32": 500.990500000000000003
+      },
+      {
+        "name": "Validator center",
+        "symbol": "VALIDATOR",
+        "initial_amount_f32": 187517.222529425225120228,
+        "constant_reserve_ratio": 73,
+        "initial_reserve_f32": 55448.780919861286564385
+      }
+    ]
+}
