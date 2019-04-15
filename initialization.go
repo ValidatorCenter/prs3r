@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	//"time"
 
@@ -94,6 +95,13 @@ func initParser() {
 	}
 	secMN := cfg.Section("masternode")
 	sdk.MnAddress = secMN.Key("ADDRESS").String()
+	_strChain := secMN.Key("CHAIN").String()
+	if strings.ToLower(_strChain) == "main" {
+		sdk.ChainMainnet = true
+	} else {
+		sdk.ChainMainnet = false
+	}
+
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()
 
