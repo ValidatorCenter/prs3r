@@ -3,6 +3,7 @@
 * [About](#about)
 * [Installing DB](#installing-in-ubuntu)
 * [Commands](#commands)
+* [Key benefits from PostgreSQL](#key-benefits-from-postgresql)
 
 ## About
 
@@ -53,3 +54,8 @@ Running the daemon:
 ```bash
 prs3rd
 ```
+
+## Key benefits from PostgreSQL:
+
+* Size of base on disk
+* Request execution speed
