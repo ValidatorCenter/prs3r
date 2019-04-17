@@ -565,7 +565,7 @@ func addTrxSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 		:updated_date
 	)`
 	strValueAll := ""
-	for iStp, dt := range dtSlc {
+	for iStp, dt := range *dtSlc {
 		str1 := strValue
 		m1 := map[string]interface{}{
 			"hash":           dt.Hash,
@@ -591,14 +591,14 @@ func addTrxSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 			log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(mapReplace) - ", err), "")
 			return false
 		}
-		if len(dtSlc) > 1 {
+		if len(*dtSlc) > 1 {
 			if iStp == 0 {
-				strValueAll = append(strValueAll, str1)
+				strValueAll = str1
 			} else {
-				strValueAll = append(strValueAll, fmt.Sprintf(", %s", str1))
+				strValueAll = fmt.Sprintf("%s, %s", strValueAll, str1)
 			}
 		} else {
-			strValueAll = append(strValueAll, str1)
+			strValueAll = str1
 		}
 	}
 	qPg_Tx2 := fmt.Sprintf(qPg_Tx, strValueAll)
@@ -610,7 +610,7 @@ func addTrxSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(Commit --> trx) - ", err), "")
 		return false
 	}
-	log("INF", "INSERT", fmt.Sprint("trx amount=", len(dtSlc)))
+	log("INF", "INSERT", fmt.Sprint("trx amount=", len(*dtSlc)))
 
 	return true
 }
@@ -619,7 +619,6 @@ func addTrxSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 	var err error
 	tx := db.MustBegin()
-	qPg_TxDt := ""
 
 	qPg_Tx := `
 	INSERT INTO trx_data (
@@ -675,10 +674,10 @@ func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 	)`
 	strValueAll := ""
 
-	for iStp, dt := range dtSlc {
+	for iStp, dt := range *dtSlc {
 		str1 := strValue
 		m2 := map[string]interface{}{}
-		m1 = map[string]interface{}{
+		m1 := map[string]interface{}{
 			"hash":                   "",
 			"coin":                   "",
 			"to_adrs":                "",
@@ -872,14 +871,14 @@ func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 			log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(mapReplace) - ", err), "")
 			return false
 		}
-		if len(dtSlc) > 1 {
+		if len(*dtSlc) > 1 {
 			if iStp == 0 {
-				strValueAll = append(strValueAll, str1)
+				strValueAll = str1
 			} else {
-				strValueAll = append(strValueAll, fmt.Sprintf(", %s", str1))
+				strValueAll = fmt.Sprintf("%s, %s", strValueAll, str1)
 			}
 		} else {
-			strValueAll = append(strValueAll, str1)
+			strValueAll = str1
 		}
 
 	}
@@ -892,6 +891,6 @@ func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSqlArr(Commit --> trx_data) - ", err), "")
 		return false
 	}
-	log("INF", "INSERT", fmt.Sprint("trx_data amount=", len(dtSlc)))
+	log("INF", "INSERT", fmt.Sprint("trx_data amount=", len(*dtSlc)))
 	return true
 }
