@@ -19,4 +19,6 @@ type AutodelegCfg struct {
 	Coin      string    `json:"coin" db:"coin"`
 	WalletPrc int       `json:"wallet_prc" db:"wallet_prc"`
 	UpdYCH    time.Time `json:"-" bson:"-" db:"updated_date"` // ClickHouse::UpdateDate
+	VerYCH    int       `json:"-" bson:"-" db:"version"`      // ClickHouse::Version
+
 }
