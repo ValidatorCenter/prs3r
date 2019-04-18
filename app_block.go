@@ -74,12 +74,18 @@ func appBlocks() {
 		// Обработка событий по номеру блока
 		worketInputBEvnt <- uint32(retBlck.Height)
 
-		if step_amntBlocksLoad < amntBlocksLoad {
-			step_amntBlocksLoad++
-		} else {
-			// пауза, дадим записаться всему в БД
-			step_amntBlocksLoad = 0
-			time.Sleep(time.Second * time.Duration(pauseBlocksLoad))
+		if (amntN_block - actN_block) > int(amntBlocksLoad) {
+			// Если количество блоков, которые нужно загрузить больше
+			// максимального количества блоков разрешенных для загрузки за раз,
+			// тогда будем делать паузы!
+
+			if step_amntBlocksLoad < amntBlocksLoad {
+				step_amntBlocksLoad++
+			} else {
+				// пауза, дадим записаться всему в БД
+				step_amntBlocksLoad = 0
+				time.Sleep(time.Second * time.Duration(pauseBlocksLoad))
+			}
 		}
 
 	}
