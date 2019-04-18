@@ -29,6 +29,8 @@ const mbchV = "0.19"   // версия Minter
 var (
 	CoinMinter       string // Основная монета Minter
 	amntN_block      int    // всего блоков в сети
+	amntBlocksLoad   uint   // количество загружаемых блоков за раз
+	pauseBlocksLoad  uint   // паузе между загрузками блоков (сек)
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
 	worketInputTrx   chan TrxExt

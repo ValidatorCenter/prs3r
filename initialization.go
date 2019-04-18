@@ -105,6 +105,15 @@ func initParser() {
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()
 
+	amntBlocksLoad, err = secDB.Key("BLOCKS_LOAD").Uint()
+	if err != nil || amntBlocksLoad == 0 {
+		amntBlocksLoad = 1000
+	}
+	pauseBlocksLoad, err = secDB.Key("BLOCKS_LOAD_PAUSE").Uint()
+	if err != nil || pauseBlocksLoad == 0 {
+		pauseBlocksLoad = 1
+	}
+
 	r_db, err := secDB.Key("REDIS_DB").Int()
 	if err != nil {
 		r_db = 0
