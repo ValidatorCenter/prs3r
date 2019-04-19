@@ -20,6 +20,7 @@ type TrxExt struct {
 // Воркер для обработки Транзакций и записи в БД
 func startWorkerTrx(workerNum int, in <-chan TrxExt) {
 	var err error
+	//var buffTrx []ms.TransResponse
 
 	for retTrns := range in {
 
@@ -128,13 +129,32 @@ func startWorkerTrx(workerNum int, in <-chan TrxExt) {
 			}
 		}
 
+		// FIXME: если новых транзакций в течение 2сек нету, то выгружаем! как это реализовать
+		// или надо как-то определять сколько транзакций и надо поштучно или через слайс, както
+
+		/*// Будем накапливать в буфере транзакции до 1000 шт, а потом разом очищать-> внесением
+		if len(buffTrx) < 1000 {
+			buffTrx = append(buffTrx, retTrns.TransResponse)
+		} else {
+			// добавляем одну транзакцию в БД
+			if !addTrxSqlArr(dbSQL, &buffTrx) {
+				log("ERR", "[w_trx.go] startWorkerTrx(addTrxSql)", "")
+			}
+			// добавляем данные для транзакции в БД
+			if !addTrxDataSqlArr(dbSQL, &buffTrx) {
+				log("ERR", "[w_trx.go] startWorkerTrx(addTrxDataSql)", "")
+			}
+			// Очищаем!
+			buffTrx = []ms.TransResponse{}
+		}*/
+
 		// добавляем одну транзакцию в БД
 		if !addTrxSql(dbSQL, &retTrns.TransResponse) {
 			log("ERR", "[w_trx.go] startWorkerTrx(addTrxSql)", "")
 		}
 		// добавляем данные для транзакции в БД
 		if !addTrxDataSql(dbSQL, &retTrns.TransResponse) {
-			log("ERR", "[w_trx.go] startWorkerTrx(addTrxDataSql) - ", "")
+			log("ERR", "[w_trx.go] startWorkerTrx(addTrxDataSql)", "")
 		}
 
 		runtime.Gosched() // попробуйте закомментировать

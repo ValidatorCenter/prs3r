@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 // получение сколько всего блоков в блокчейне
@@ -31,6 +32,7 @@ func appBlocks() {
 	log("INF", "INIT", fmt.Sprintf("Последний блок в БД: %d", st0.LatestBlockSave))
 	actN_block := st0.LatestBlockSave + 1 // загружаем следующий блок!
 
+	step_amntBlocksLoad := uint(0) // считает сколько загрузили за раз
 	for i := actN_block; i <= amntN_block; i++ {
 		log("INF", "LOAD", fmt.Sprintf("=== БЛОК %d из %d", i, amntN_block))
 
@@ -71,5 +73,20 @@ func appBlocks() {
 
 		// Обработка событий по номеру блока
 		worketInputBEvnt <- uint32(retBlck.Height)
+
+		if (amntN_block - actN_block) > int(amntBlocksLoad) {
+			// Если количество блоков, которые нужно загрузить больше
+			// максимального количества блоков разрешенных для загрузки за раз,
+			// тогда будем делать паузы!
+
+			if step_amntBlocksLoad < amntBlocksLoad {
+				step_amntBlocksLoad++
+			} else {
+				// пауза, дадим записаться всему в БД
+				step_amntBlocksLoad = 0
+				time.Sleep(time.Second * time.Duration(pauseBlocksLoad))
+			}
+		}
+
 	}
 }
