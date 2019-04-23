@@ -102,6 +102,12 @@ func initParser() {
 		sdk.ChainMainnet = false
 	}
 
+	loadCorrection = 0
+	loadCorrection, err = secMN.Key("BLOCK_CORRECTION").Uint()
+	if err != nil {
+		loadCorrection = 1000
+	}
+
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()
 

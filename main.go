@@ -31,6 +31,7 @@ var (
 	amntN_block      int    // всего блоков в сети
 	amntBlocksLoad   uint   // количество загружаемых блоков за раз
 	pauseBlocksLoad  uint   // паузе между загрузками блоков (сек)
+	loadCorrection   uint   // на сколько блоков не дозагружать из блокчейна, если еще не синхронизировалось в блокчейне валидаторам подписантам
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
 	worketInputTrx   chan TrxExt

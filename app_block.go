@@ -27,6 +27,11 @@ func appBlocks() {
 		return
 	}
 
+	// Корректировка по последнему загружаемому блоку
+	if amntN_block > loadCorrection {
+		amntN_block -= loadCorrection
+	}
+
 	// получаем системуную коллекцию
 	st0 := srchSysSql(dbSys)
 	log("INF", "INIT", fmt.Sprintf("Последний блок в БД: %d", st0.LatestBlockSave))
