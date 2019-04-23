@@ -107,7 +107,7 @@ func initParser() {
 	if err != nil {
 		loadCorrection = 1000
 	}
-
+  
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()
 
