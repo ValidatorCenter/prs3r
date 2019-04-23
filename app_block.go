@@ -28,8 +28,8 @@ func appBlocks() {
 	}
 
 	// Корректировка по последнему загружаемому блоку
-	if amntN_block > loadCorrection {
-		amntN_block -= loadCorrection
+	if amntN_block > int(loadCorrection) {
+		amntN_block -= int(loadCorrection)
 	}
 
 	// получаем системуную коллекцию
