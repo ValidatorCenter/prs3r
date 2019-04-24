@@ -121,7 +121,7 @@ func startWorkerBEvnt(workerNum int, in <-chan uint32) {
 
 						// Заносим задачу в базу SQL
 						if !addNodeTaskSql(dbSQL, &oneToDoMn) {
-							log("ERR", "[blocks_mdb.go] addNodeTaskSql(dbSQL, ...)", "")
+							log("ERR", "[w_evnt.go] startWorkerBEvnt(addNodeTaskSql)", "")
 						}
 						//...............................................
 					}

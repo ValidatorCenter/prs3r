@@ -130,10 +130,10 @@ func trxStartNode(bHeight uint32, retTrns *TrxExt) {
 		}
 		a.Blocks = append(a.Blocks, s.BlocksStory{ID: bHeight, Type: "setCandidateOnData"})
 		if !addNodeBlockstorySql(dbSQL, &a) {
-			log("ERR", "[app_node.go] startWorkerTrx(addNodeBlockstorySql) setCandidateOnData", "")
+			log("ERR", "[app_node.go] trxStartNode(addNodeBlockstorySql) setCandidateOnData", "")
 		}
 	} else {
-		log("ERR", "[app_node.go] startWorkerTrx(TX_SetCandidateOnData) PubKey =0", "")
+		log("ERR", "[app_node.go] trxStartNode(TX_SetCandidateOnData) PubKey =0", "")
 	}
 }
 
@@ -145,9 +145,9 @@ func trxStopNode(bHeight uint32, retTrns *TrxExt) {
 		}
 		a.Blocks = append(a.Blocks, s.BlocksStory{ID: bHeight, Type: "setCandidateOffData"})
 		if !addNodeBlockstorySql(dbSQL, &a) {
-			log("ERR", "[app_node.go] startWorkerTrx(addNodeBlockstorySql) setCandidateOffData", "")
+			log("ERR", "[app_node.go] trxStopNode(addNodeBlockstorySql) setCandidateOffData", "")
 		}
 	} else {
-		log("ERR", "[app_node.go] startWorkerTrx(TX_SetCandidateOffData) PubKey =0", "")
+		log("ERR", "[app_node.go] trxStopNode(TX_SetCandidateOffData) PubKey =0", "")
 	}
 }
