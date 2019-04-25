@@ -27,11 +27,11 @@ func trxCreateCoin(retTrns *TrxExt) {
 
 	// добавляем монету в SQL
 	if !addCoinSql(dbSQL, &coinMCD) {
-		log("ERR", "[app_coin.go] startWorkerTrx(addCoinSql)", "")
+		log("ERR", "[app_coin.go] trxCreateCoin(addCoinSql)", "")
 	}
 	// добавляем монету в Redis
 	if !updCoinInfoRds(dbSys, &coinMCD) {
-		log("ERR", "[app_coin.go] startWorkerTrx(updCoinInfoRds)", "")
+		log("ERR", "[app_coin.go] trxCreateCoin(updCoinInfoRds)", "")
 	}
 	log("OK", fmt.Sprintf("Монета: %s (%s)", dt5CrtCoin.CoinSymbol, dt5CrtCoin.Name), "")
 }
@@ -79,7 +79,7 @@ func trxSellBuyCoin(retTrns *TrxExt) {
 	calcCoin(&addCoin)
 
 	if !addCoinTrxSql(dbSQL, &addCoin) {
-		log("ERR", "[app_coin.go] startWorkerTrx(addCoinTrxSql)", "")
+		log("ERR", "[app_coin.go] trxSellBuyCoin(addCoinTrxSql)", "")
 	}
 
 	// Пересчет с2с
@@ -95,7 +95,7 @@ func calcCoin2Coin(tickerS, tickerB string) {
 	lt24 := now.Add(-time.Duration(24) * time.Hour)
 	allC2cTrx, err := srchCoin2CoinTrxSql(dbSQL, tickerS, tickerB, lt24, now)
 	if err != nil {
-		log("ERR", fmt.Sprint("[w_trx.go] calcCoin2Coin(srchCoin2CoinTrxSql) -", err), "")
+		log("ERR", fmt.Sprint("[app_coin.go] calcCoin2Coin(srchCoin2CoinTrxSql) -", err), "")
 		return
 	}
 
@@ -123,7 +123,7 @@ func calcCoin2Coin(tickerS, tickerB string) {
 
 	// 3) Заносим в MEM
 	if !updCoin2Redis(dbSys, &mPCL) {
-		log("ERR", "[w_trx.go] calcCoin2Coin(updCoin2Redis)", "")
+		log("ERR", "[app_coin.go] calcCoin2Coin(updCoin2Redis)", "")
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ func calcCoin2Coin(tickerS, tickerB string) {
 			coin1 := s.CoinMarketCapData{CoinSymbol: tickerX}
 			iCn, err := sdk.GetCoinInfo(coin1.CoinSymbol)
 			if err != nil {
-				log("ERR", fmt.Sprint("[w_trx.go] calcCoin2Coin(GetCoinInfo)", coin1.CoinSymbol, " - ERR:", err), "")
+				log("ERR", fmt.Sprint("[app_coin.go] calcCoin2Coin(GetCoinInfo)", coin1.CoinSymbol, " - ERR:", err), "")
 				continue
 			}
 
@@ -143,7 +143,7 @@ func calcCoin2Coin(tickerS, tickerB string) {
 			coin1.ReserveBalanceNow = iCn.ReserveBalance
 
 			if !updCoinInfoRds_3(dbSys, &coin1) {
-				log("ERR", "[w_trx.go] calcCoin2Coin(updCoinInfoRds_3)", "")
+				log("ERR", "[app_coin.go] calcCoin2Coin(updCoinInfoRds_3)", "")
 			}
 		}
 	}
@@ -153,12 +153,12 @@ func calcCoin2Coin(tickerS, tickerB string) {
 func CoinPriceNow(coinSmbl string, coinSmbl2 string) (float32, float32) {
 	dataB, err := sdk.EstimateCoinBuy(coinSmbl, coinSmbl2, 1)
 	if err != nil {
-		log("ERR", fmt.Sprint("[coin2coin_mdb.go] sdk.EstimateCoinBuy ", coinSmbl, "/", coinSmbl2, " - ", err), "")
+		log("ERR", fmt.Sprint("[app_coin.go] CoinPriceNow(sdk.EstimateCoinBuy) ", coinSmbl, "/", coinSmbl2, " - ", err), "")
 		//panic(err)
 	}
 	dataS, err := sdk.EstimateCoinSell(coinSmbl, coinSmbl2, 1)
 	if err != nil {
-		log("ERR", fmt.Sprint("[coin2coin_mdb.go] sdk.EstimateCoinSell ", coinSmbl, "/", coinSmbl2, " - ", err), "")
+		log("ERR", fmt.Sprint("[app_coin.go] CoinPriceNow(sdk.EstimateCoinSell) ", coinSmbl, "/", coinSmbl2, " - ", err), "")
 		//panic(err)
 	}
 	return dataB.WillPay, dataS.WillGet
