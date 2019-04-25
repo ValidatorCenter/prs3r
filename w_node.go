@@ -37,7 +37,7 @@ func startWorkerBNode(workerNum int, in <-chan B1NExt) {
 			}
 			a.Blocks = append(a.Blocks, s.BlocksStory{ID: pV1.Height, Type: "AbsentBlock"})
 			if !addNodeBlockstorySql(dbSQL, &a) {
-				log("ERR", "[w_trx.go] startWorkerTrx(addNodeBlockstorySql) declareCandidacy", "")
+				log("ERR", "[w_node.go] startWorkerBNode(addNodeBlockstorySql) AbsentBlock", "")
 			}
 			log("STR", fmt.Sprintf("AbsentBlock:: %d - %s", pV1.Height, pV1.PubKey), "")
 		}
@@ -66,7 +66,7 @@ func startWorkerBNode(workerNum int, in <-chan B1NExt) {
 			oneNodeX.Uptime = 0
 		}
 		if !updNodeInfoRds(dbSys, &oneNodeX) {
-			log("ERR", "[w_trx.go] startWorkerBNode(updNodeInfoRds)", "")
+			log("ERR", "[w_node.go] startWorkerBNode(updNodeInfoRds)", "")
 		}
 
 		// Добавляем валидатора блока в SQL
