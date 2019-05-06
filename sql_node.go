@@ -57,7 +57,25 @@ func addNodeSql(db *sqlx.DB, dt *s.NodeExt) bool {
 
 // Добавить о ноде историю блоков в SQL
 func addNodeBlockstorySql(db *sqlx.DB, dt *s.NodeExt) bool {
+	chNAr := srchNodeBlockstory(db, dt.PubKey) // Для проверки на задвоенность блока для ноды
+
 	for _, bs1 := range dt.Blocks {
+
+		//+Проверка
+		fndBS := false
+		for _, tst1 := range chNAr {
+			if tst1.ID == bs1.ID && tst1.Type == bs1.Type {
+				fndBS = true
+			}
+		}
+
+		if fndBS {
+			log("ERR", fmt.Sprint("[sql_node.go] addNodeBlockstorySql(Find!) - [", dt.PubKey, " ", bs1.ID, " ", bs1.Type, "]"), "")
+			//panic("!!!")
+			continue
+		}
+		//-
+
 		tx := db.MustBegin()
 		qPg := `
 		INSERT INTO node_blockstory (

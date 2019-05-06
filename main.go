@@ -14,18 +14,6 @@ import (
 	"github.com/go-redis/redis"
 )
 
-const worherBlock = 10 // количество воркеров для отработки Блоков
-const chanBlock = 20   // размер канала-буфферизации для отработки Блоков
-const worherBEvnt = 10 // количество воркеров для отработки Событий блока
-const chanBEvnt = 20   // размер канала-буфферизации для отработки Событий блока
-const worherTrx = 100  // количество воркеров для отработки Транзакций
-const chanTrx = 200    // размер канала-буфферизации для отработки Транзакций
-const worherNode = 10  // количество воркеров для отработки Нод блокчейна
-const chanNode = 10    // размер канала-буфферизации для отработки Нод блокчейна
-const worherBNode = 10 // количество воркеров для отработки Валидаторов(нод) блока
-const chanBNode = 20   // размер канала-буфферизации для отработки Валидаторов(нод) блока
-const mbchV = "0.20"   // версия Minter
-
 var (
 	CoinMinter       string // Основная монета Minter
 	amntN_block      int    // всего блоков в сети
@@ -37,6 +25,17 @@ var (
 	worketInputTrx   chan TrxExt
 	worketInputBNode chan B1NExt
 	worketInputBEvnt chan uint32
+
+	workerBlock uint
+	chanBlock   uint
+	workerBEvnt uint
+	chanBEvnt   uint
+	workerTrx   uint
+	chanTrx     uint
+	workerNode  uint
+	chanNode    uint
+	workerBNode uint
+	chanBNode   uint
 
 	dbSQL *sqlx.DB
 	dbSys *redis.Client
@@ -55,16 +54,16 @@ func main() {
 	worketInputBEvnt = make(chan uint32, chanBEvnt)
 
 	// запуск воркеров-демонов
-	for i := 0; i < worherBlock; i++ {
+	for i := uint(0); i < workerBlock; i++ {
 		go startWorkerBlock(i, worketInputBlock)
 	}
-	for i := 0; i < worherTrx; i++ {
+	for i := uint(0); i < workerTrx; i++ {
 		go startWorkerTrx(i, worketInputTrx)
 	}
-	for i := 0; i < worherBNode; i++ {
+	for i := uint(0); i < workerBNode; i++ {
 		go startWorkerBNode(i, worketInputBNode)
 	}
-	for i := 0; i < worherBEvnt; i++ {
+	for i := uint(0); i < workerBEvnt; i++ {
 		go startWorkerBEvnt(i, worketInputBEvnt)
 	}
 

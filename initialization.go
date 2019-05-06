@@ -21,6 +21,19 @@ import (
 	"github.com/go-redis/redis"
 )
 
+const mbchV = "0.20" // версия Minter
+
+const c_workerBlock = 10 // количество воркеров для отработки Блоков
+const c_chanBlock = 20   // размер канала-буфферизации для отработки Блоков
+const c_workerBEvnt = 10 // количество воркеров для отработки Событий блока
+const c_chanBEvnt = 20   // размер канала-буфферизации для отработки Событий блока
+const c_workerTrx = 100  // количество воркеров для отработки Транзакций
+const c_chanTrx = 200    // размер канала-буфферизации для отработки Транзакций
+const c_workerNode = 10  // количество воркеров для отработки Нод блокчейна
+const c_chanNode = 10    // размер канала-буфферизации для отработки Нод блокчейна
+const c_workerBNode = 10 // количество воркеров для отработки Валидаторов(нод) блока
+const c_chanBNode = 20   // размер канала-буфферизации для отработки Валидаторов(нод) блока
+
 // Структура для файла "start.json"
 type ConfigStart struct {
 	AppUserX []s.NodeUserX         `json:"app_userx"`
@@ -107,7 +120,49 @@ func initParser() {
 	if err != nil {
 		loadCorrection = 1000
 	}
-  
+
+	secP3 := cfg.Section("parser")
+	workerBlock, err = secP3.Key("WORKER_BLOCK").Uint()
+	if err != nil || workerBlock == 0 {
+		workerBlock = c_workerBlock
+	}
+	chanBlock, err = secP3.Key("CHAN_BLOCK").Uint()
+	if err != nil || chanBlock == 0 {
+		chanBlock = c_chanBlock
+	}
+	workerBEvnt, err = secP3.Key("WORKER_BEVNT").Uint()
+	if err != nil || workerBEvnt == 0 {
+		workerBEvnt = c_workerBEvnt
+	}
+	chanBEvnt, err = secP3.Key("CHAN_BEVNT").Uint()
+	if err != nil || chanBEvnt == 0 {
+		chanBEvnt = c_chanBEvnt
+	}
+	workerTrx, err = secP3.Key("WORKER_TRX").Uint()
+	if err != nil || workerTrx == 0 {
+		workerTrx = c_workerTrx
+	}
+	chanTrx, err = secP3.Key("CHAN_TRX").Uint()
+	if err != nil || chanTrx == 0 {
+		chanTrx = c_chanTrx
+	}
+	workerNode, err = secP3.Key("WORKER_NODE").Uint()
+	if err != nil || workerNode == 0 {
+		workerNode = c_workerNode
+	}
+	chanNode, err = secP3.Key("CHAN_NODE").Uint()
+	if err != nil || chanNode == 0 {
+		chanNode = c_chanNode
+	}
+	workerBNode, err = secP3.Key("WORKER_BNODE").Uint()
+	if err != nil || workerBNode == 0 {
+		workerBNode = c_workerBNode
+	}
+	chanBNode, err = secP3.Key("CHAN_BNODE").Uint()
+	if err != nil || chanBNode == 0 {
+		chanBNode = c_chanBNode
+	}
+
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()
 

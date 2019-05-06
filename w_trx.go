@@ -18,7 +18,7 @@ type TrxExt struct {
 }
 
 // Воркер для обработки Транзакций и записи в БД
-func startWorkerTrx(workerNum int, in <-chan TrxExt) {
+func startWorkerTrx(workerNum uint, in <-chan TrxExt) {
 	var err error
 	//var buffTrx []ms.TransResponse
 
