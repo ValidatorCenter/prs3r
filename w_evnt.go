@@ -25,7 +25,7 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 			nodeDelgateRet := []s.NodeExt{}
 			nodeDelgateRet = srchNodeSql_all(dbSQL)
 
-			// разбираем события для блока
+			// разбираем события для блока, прочие события в других местах (декларирование{trxCreateNode}, запуск{trxStartNode}/остановка{trxStopNode} и пропуск{startWorkerBNode} - в других местах!)
 			for _, retEv1 := range retEv.Events {
 
 				// ШТРАФ:
@@ -33,29 +33,13 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 					oneNodeX1 := s.NodeExt{}
 					oneNodeX1 = srchNodeSql_pk(dbSQL, retEv1.Value.ValidatorPubKey) // [*]
 					if oneNodeX1.PubKey != "" {
-						// TODO: возложить на SQL проверку, исправить не на полную прогрузку и анализ тут в коде
-						// а на поиск в БД
-						oneNodeX1.Blocks = srchNodeBlockstory(dbSQL, retEv1.Value.ValidatorPubKey) // прогружаем блоки
+						// нету, добавляем!
+						oneNodeX1.Blocks = append(oneNodeX1.Blocks, s.BlocksStory{ID: bHeight, Type: "SlashEvent"})
 
-						// только перебором и сравнивать id и тип в blocks_story! запрос не корректно отрабатывается при поиске во вложениях
-						findY := false
-						for _, el1E := range oneNodeX1.Blocks {
-							// проверяем - записан-ли уже штраф в базу:
-							if el1E.ID == bHeight && el1E.Type == "SlashEvent" {
-								findY = true
-							}
+						if !addNodeBlockstorySql(dbSQL, &oneNodeX1) {
+							log("ERR", "[w_evnt.go] startWorkerBEvnt(addNodeBlockstorySql) SlashEvent", "")
 						}
-
-						if !findY {
-							// нету, добавляем!
-							oneNodeX1.Blocks = append(oneNodeX1.Blocks, s.BlocksStory{ID: bHeight, Type: "SlashEvent"})
-
-							if !addNodeBlockstorySql(dbSQL, &oneNodeX1) {
-								log("ERR", "[w_evnt.go] startWorkerBEvnt(addNodeBlockstorySql) SlashEvent", "")
-							}
-							log("STR", fmt.Sprintf("SlashEvent:: %d - %s", bHeight, oneNodeX1.PubKey), "")
-
-						}
+						log("STR", fmt.Sprintf("SlashEvent:: %d - %s", bHeight, oneNodeX1.PubKey), "")
 					}
 				}
 
