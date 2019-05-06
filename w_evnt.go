@@ -10,7 +10,7 @@ import (
 )
 
 // Воркер для обработки Событий блока и записи в БД (node_story)
-func startWorkerBEvnt(workerNum int, in <-chan uint32) {
+func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 	for bHeight := range in {
 		// Разбор Событий(event's) блока
 		retEv, err := sdk.GetEvents(int(bHeight))

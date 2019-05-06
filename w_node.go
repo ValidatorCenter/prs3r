@@ -27,7 +27,7 @@ type NodeExtInfo struct {
 }
 
 // Воркер для обработки Валидаторов блока и записи в БД (node_story) и MEM
-func startWorkerBNode(workerNum int, in <-chan B1NExt) {
+func startWorkerBNode(workerNum uint, in <-chan B1NExt) {
 	for pV1 := range in {
 		if pV1.Signed == false {
 			// пропустили блок!

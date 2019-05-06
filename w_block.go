@@ -9,7 +9,7 @@ import (
 )
 
 // Воркер для обработки Блока и записи его в БД
-func startWorkerBlock(workerNum int, in <-chan ms.BlockResponse) {
+func startWorkerBlock(workerNum uint, in <-chan ms.BlockResponse) {
 	for retBlck := range in {
 		// Данные нового блока (в структуре подобной что в SDK)
 		retBlckEx := s.BlockResponse2{}
