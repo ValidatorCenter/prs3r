@@ -21,7 +21,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
-const mbchV = "0.20" // версия Minter
+const mbchV = "0.21" // версия Minter
 
 const c_workerBlock = 10 // количество воркеров для отработки Блоков
 const c_chanBlock = 20   // размер канала-буфферизации для отработки Блоков

@@ -98,7 +98,7 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 						oneToDoMn.PubKey = retEv1.Value.ValidatorPubKey
 						oneToDoMn.Address = retEv1.Value.Address
 
-						oneToDoMn.Amount = retEv1.Value.Amount - (retEv1.Value.Amount*float32(prcIndividualWallet))/float32(prcMnValid) - 0.01 //комиссия 0.01 платит делегатор
+						oneToDoMn.Amount = retEv1.Value.Amount - (retEv1.Value.Amount*float32(prcIndividualWallet))/float32(prcMnValid) //- 0.01 //комиссия 0.01 платит делегатор
 						if oneToDoMn.Amount < 0 {
 							oneToDoMn.Amount = 0
 						}
