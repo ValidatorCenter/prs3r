@@ -9,6 +9,8 @@ import (
 	s "github.com/ValidatorCenter/prs3r/strc"
 )
 
+const PRC100 = 100 // 100%
+
 // Воркер для обработки Событий блока и записи в БД (node_story)
 func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 	for bHeight := range in {
@@ -51,8 +53,8 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 				// 3 - заносим в список задач на исполнение
 				dateNow := time.Now()
 				if retEv1.Type == "minter/RewardEvent" && retEv1.Value.Role == "Delegator" {
-					prcMnValid := 100          // процент мастер ноды (100%-максимум)
-					prcIndividualWallet := 100 // процент индивидуальный для кошелька (100%-максимум)
+					prcMnValid := PRC100          // процент мастер ноды (100%-максимум)
+					prcIndividualWallet := PRC100 // процент индивидуальный для кошелька (100%-максимум)
 					// Комиссия ноды - по умолчанию (установленная при создание ноды)
 					for _, onMn := range nodeDelgateRet {
 						if onMn.PubKey == retEv1.Value.ValidatorPubKey {
@@ -98,7 +100,8 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 						oneToDoMn.PubKey = retEv1.Value.ValidatorPubKey
 						oneToDoMn.Address = retEv1.Value.Address
 
-						oneToDoMn.Amount = retEv1.Value.Amount - (retEv1.Value.Amount*float32(prcIndividualWallet))/float32(prcMnValid) //- 0.01 //комиссия 0.01 платит делегатор
+						//oneToDoMn.Amount = retEv1.Value.Amount - (retEv1.Value.Amount*float32(prcIndividualWallet))/float32(prcMnValid) //- 0.01 //комиссия 0.01 платит делегатор
+						oneToDoMn.Amount = retEv1.Value.Amount * float32(prcMnValid-prcIndividualWallet) / float32(PRC100-prcMnValid)
 						if oneToDoMn.Amount < 0 {
 							oneToDoMn.Amount = 0
 						}
