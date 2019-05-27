@@ -73,7 +73,7 @@ func main() {
 	// Загрузка блока с блок-чейна
 	for { // бесконечный цикл
 		appBlocks()
-		time.Sleep(time.Minute * 3) // пауза 3мин ....в этот момент лучше прерывать
+		time.Sleep(time.Minute * 1) // пауза 1мин ....в этот момент лучше прерывать
 	}
 
 	close(worketInputBlock)

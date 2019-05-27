@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	//"time"
+	"time"
 
 	"gopkg.in/ini.v1"
 
@@ -21,7 +21,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
-const mbchV = "0.21" // версия Minter
+const mbchV = "1.0" // версия Minter
 
 const c_workerBlock = 10 // количество воркеров для отработки Блоков
 const c_chanBlock = 20   // размер канала-буфферизации для отработки Блоков
@@ -225,13 +225,17 @@ func initParser() {
 	}
 
 	// Проверка версии Минтера
-	mbch, err := sdk.GetStatus()
-	if err != nil {
-		log("ERR", fmt.Sprint("Подключение к Minter-", err.Error()), "")
-		dbSQL.Close()
-		dbSys.Close()
-		os.Exit(0)
+	mbch := ms.ResultNetwork{}
+	for {
+		mbch, err = sdk.GetStatus()
+		if err != nil {
+			log("ERR", fmt.Sprint("Подключение к Minter-", err.Error()), "")
+			time.Sleep(10 * time.Second) // ждём до новой попытки
+		} else {
+			break
+		}
 	}
+
 	if mbch.Version[0:len(mbchV)] != mbchV {
 		log("ERR", fmt.Sprint("Парсер не для данной версии блокчейна Minter"), "")
 		dbSQL.Close()
