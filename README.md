@@ -7,7 +7,7 @@
 
 ## About
 
-Actual for [Minter Blockchain](https://minter.network) version 0.19.x.
+Actual for [Minter Blockchain](https://minter.network) version 1.0.x.
 
 ## Installing in Ubuntu
 
