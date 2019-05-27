@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	//"time"
+	"time"
 
 	"gopkg.in/ini.v1"
 
@@ -225,13 +225,17 @@ func initParser() {
 	}
 
 	// Проверка версии Минтера
-	mbch, err := sdk.GetStatus()
-	if err != nil {
-		log("ERR", fmt.Sprint("Подключение к Minter-", err.Error()), "")
-		dbSQL.Close()
-		dbSys.Close()
-		os.Exit(0)
+	mbch := ms.ResultNetwork{}
+	for {
+		mbch, err = sdk.GetStatus()
+		if err != nil {
+			log("ERR", fmt.Sprint("Подключение к Minter-", err.Error()), "")
+			time.Sleep(10 * time.Second) // ждём до новой попытки
+		} else {
+			break
+		}
 	}
+
 	if mbch.Version[0:len(mbchV)] != mbchV {
 		log("ERR", fmt.Sprint("Парсер не для данной версии блокчейна Minter"), "")
 		dbSQL.Close()

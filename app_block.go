@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
+
+	ms "github.com/ValidatorCenter/minter-go-sdk"
 )
 
 // получение сколько всего блоков в блокчейне
@@ -42,10 +44,17 @@ func appBlocks() {
 		log("INF", "LOAD", fmt.Sprintf("=== БЛОК %d из %d", i, amntN_block))
 
 		// получаем блок по номеру i с блокчейна
-		retBlck, err := sdk.GetBlock(i)
-		if err != nil {
-			log("ERR", fmt.Sprint("[app_block.go] appBlocks(sdk.GetBlock) - ", err), "")
-			panic(err)
+		retBlck := ms.BlockResponse{}
+
+		for {
+			retBlck, err = sdk.GetBlock(i)
+			if err != nil {
+				//Возможно не доступна нода блокчейна, надо подождать а не паниковать
+				log("ERR", fmt.Sprint("[app_block.go] appBlocks(sdk.GetBlock) - ", err), "")
+				time.Sleep(10 * time.Second) // ждём до новой попытки
+			} else {
+				break
+			}
 		}
 
 		if retBlck.Hash == "" {
