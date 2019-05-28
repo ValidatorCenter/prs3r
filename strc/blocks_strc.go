@@ -4,6 +4,7 @@ import (
 	"time"
 
 	ms "github.com/ValidatorCenter/minter-go-sdk"
+	"github.com/satori/go.uuid"
 )
 
 /*
@@ -64,6 +65,7 @@ type NodeUserX struct {
 
 // Задачи для исполнения ноде
 type NodeTodo struct {
+	ID         uuid.UUID `json:"_id" db:"_id"`
 	Priority   int       `json:"priority" db:"priority"`     // от 0 до макс! главные:(0)?, (1)возврат делегатам,(2) на возмещение штрафов,(3) оплата сервера, на развитие, (4) распределние между соучредителями
 	Done       bool      `json:"done" db:"done"`             // выполнено
 	Created    time.Time `json:"created" db:"created"`       // создана time

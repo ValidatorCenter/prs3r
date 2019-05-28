@@ -234,6 +234,7 @@ func addNodeTaskSql(db *sqlx.DB, dt *s.NodeTodo) bool {
 
 	qPg := `
 		INSERT INTO node_tasks (
+			_id,
 			priority,
 			done,
 			created,
@@ -247,6 +248,7 @@ func addNodeTaskSql(db *sqlx.DB, dt *s.NodeTodo) bool {
 			tx_hash,
 			updated_date
 		) VALUES (
+			:_id,
 			:priority,
 			:done,
 			:created,
