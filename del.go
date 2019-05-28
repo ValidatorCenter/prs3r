@@ -232,6 +232,7 @@ func ClearChSqlDB() {
 	dbSQL.MustExec(delCh_node_tasks)
 	schemaCh_nodetodo := `
 			CREATE TABLE node_tasks (
+				_id UUID,
 				priority Int,
 				done UInt8,
 				created DateTime,
@@ -244,7 +245,7 @@ func ClearChSqlDB() {
 				comment String,
 				tx_hash String,
 				updated_date Date
-			) ENGINE = ReplacingMergeTree(updated_date, (type,address,pub_key,height_i32), 8192)
+			) ENGINE = ReplacingMergeTree(updated_date, (_id), 8192)
 			` // использовать: SELECT * FROM node_tasks FINAL;
 	dbSQL.MustExec(schemaCh_nodetodo)
 	log("OK", "...очищена - node_tasks", "")
