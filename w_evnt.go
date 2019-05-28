@@ -92,7 +92,7 @@ func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
 						//..расчет возврата...............................
 						// Период устраивает (хотя нужно сразу в запросе SQL это надо сделать)
 						oneToDoMn := s.NodeTodo{}
-						oneToDoMn.ID = uuid.Must(uuid.NewV4())
+						oneToDoMn.ID = uuid.Must(uuid.NewV4()).String()
 						oneToDoMn.Priority = 1 // возврат делегатам
 						oneToDoMn.Comment = "CashBack delegate masternode"
 						oneToDoMn.Type = "SendCashback"
