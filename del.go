@@ -290,25 +290,4 @@ func ClearChSqlDB() {
 	/**************************************************************************/
 	/**************************************************************************/
 	/**************************************************************************/
-
-	////////////////////////////////////////////////////////////////////////////
-	// Таблица содержит данные о настройка Автоделегатора для кошелька
-	delCh_autodeleg := `DROP TABLE IF EXISTS autodeleg`
-	dbSQL.MustExec(delCh_autodeleg)
-	schemaCh_autodeleg := `
-			CREATE TABLE autodeleg (
-				address String,
-				pub_key String,
-				coin String,
-				wallet_prc UInt32,
-				updated_date Date,
-				version Int8
-			) ENGINE=CollapsingMergeTree(updated_date,(address,pub_key,coin),8192,version)
-			` // использовать: SELECT * FROM autodeleg FINAL;
-	/*
-		Если при вставке указать version = -1, запись будет удалена.
-		При значениях version = 1 запись будет оставлена в таблице ОБНОВЛЕНА.
-	*/
-	dbSQL.MustExec(schemaCh_autodeleg)
-	log("OK", "...очищена - autodeleg", "")
 }

@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"runtime"
 
-	//ms "github.com/ValidatorCenter/minter-go-sdk"
 	s "github.com/ValidatorCenter/prs3r/strc"
 )
-
-const PRC100 = 100 // 100%
 
 // Воркер для обработки Событий блока и записи в БД (node_story)
 func startWorkerBEvnt(workerNum uint, in <-chan uint32) {
