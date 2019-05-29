@@ -36,17 +36,7 @@ const c_chanBNode = 20   // размер канала-буфферизации �
 
 // Структура для файла "start.json"
 type ConfigStart struct {
-	AppUserX []s.NodeUserX         `json:"app_userx"`
-	AppCoin  []s.CoinMarketCapData `json:"coins"`
-	/*app_state
-			|-candidates[]
-				|-pub_key
-				  reward_address
-	        	  owner_address
-			      total_bip_stake
-	        	  commission
-
-	*/
+	AppCoin []s.CoinMarketCapData `json:"coins"`
 }
 
 // загрузка файла genesis.json
@@ -59,14 +49,6 @@ func loadStartJSON() bool {
 		log("ERR", fmt.Sprint("Чтение файла JSON - ", err), "")
 		return false
 	}
-	// Заносим в базу: индивидуальные % ставки для кошельков!
-	for iStp, _ := range cfgStr.AppUserX {
-		if !addNodeUserX(dbSQL, &cfgStr.AppUserX[iStp]) {
-			log("ERR", fmt.Sprint("Запись в node_userx - ", cfgStr.AppUserX[iStp].Address), "")
-			return false
-		}
-	}
-	// TODO: данные по нодам, если после хардфорка
 
 	// Данные по монетам, если после хардфорка
 	for iCn, _ := range cfgStr.AppCoin {

@@ -224,24 +224,6 @@ func ClearChSqlDB() {
 	dbSQL.MustExec(schemaCh_node_stakes)
 	log("OK", "...очищена - node_stakes", "")
 
-	////////////////////////////////////////////////////////////////////////////
-	// Таблица содержит информацию для валидаторы об Уникальных % комиссии для
-	// определенных делегаторов
-	delCh_node_userx := `DROP TABLE IF EXISTS node_userx`
-	dbSQL.MustExec(delCh_node_userx)
-	schemaCh_nodeuserx := `
-			CREATE TABLE node_userx (
-				pub_key String,
-				address String,
-				start DateTime,
-				finish DateTime,
-				commission UInt32,
-				updated_date Date
-			) ENGINE=MergeTree(updated_date,(pub_key,address,start),8192)
-			`
-	dbSQL.MustExec(schemaCh_nodeuserx)
-	log("OK", "...очищена - node_userx", "")
-
 	/**************************************************************************/
 	/**************************************************************************/
 	/**************************************************************************/
