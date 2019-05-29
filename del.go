@@ -225,32 +225,6 @@ func ClearChSqlDB() {
 	log("OK", "...очищена - node_stakes", "")
 
 	////////////////////////////////////////////////////////////////////////////
-	// TODO: надо как-то другой ключ переделать
-	// Таблица содержит Задачи для валидатора/ноды (возвраты делегатам)
-	//(CH: таблица имеет обновляемые реквизиты... статус, дату выполнения и id-транзакция)
-	delCh_node_tasks := `DROP TABLE IF EXISTS node_tasks`
-	dbSQL.MustExec(delCh_node_tasks)
-	schemaCh_nodetodo := `
-			CREATE TABLE node_tasks (
-				_id UUID,
-				priority Int,
-				done UInt8,
-				created DateTime,
-				donet DateTime,
-				type String,
-				height_i32 UInt32,
-				pub_key String,
-				address String,
-				amount_f32 Float32,
-				comment String,
-				tx_hash String,
-				updated_date Date
-			) ENGINE = ReplacingMergeTree(updated_date, (_id), 8192)
-			` // использовать: SELECT * FROM node_tasks FINAL;
-	dbSQL.MustExec(schemaCh_nodetodo)
-	log("OK", "...очищена - node_tasks", "")
-
-	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит информацию для валидаторы об Уникальных % комиссии для
 	// определенных делегаторов
 	delCh_node_userx := `DROP TABLE IF EXISTS node_userx`

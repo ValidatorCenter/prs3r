@@ -225,60 +225,6 @@ func srchNodeSql_all(db *sqlx.DB) []s.NodeExt {
 	return pp
 }
 
-// Добавить задачу для ноды в SQL
-func addNodeTaskSql(db *sqlx.DB, dt *s.NodeTodo) bool {
-	var err error
-	tx := db.MustBegin()
-
-	dt.UpdYCH = time.Now()
-
-	qPg := `
-		INSERT INTO node_tasks (
-			_id,
-			priority,
-			done,
-			created,
-			donet,
-			type,
-			height_i32,
-			pub_key,
-			address,
-			amount_f32,
-			comment,
-			tx_hash,
-			updated_date
-		) VALUES (
-			:_id,
-			:priority,
-			:done,
-			:created,
-			:donet,
-			:type,
-			:height_i32,
-			:pub_key,
-			:address,
-			:amount_f32,
-			:comment,
-			:tx_hash,
-			:updated_date
-		)`
-
-	_, err = tx.NamedExec(qPg, &dt)
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeTaskSql(NamedExec) -", err), "")
-		panic(err)
-		return false
-	}
-	log("INF", "INSERT", fmt.Sprint("node-task ", dt.Address, " ", dt.PubKey))
-
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeTaskSql(Commit() -", err), "")
-		return false
-	}
-	return true
-}
-
 //Поиск блоков-истории ноды по паблику
 func srchNodeBlockstory(db *sqlx.DB, pub_key string) []s.BlocksStory {
 	v := []s.BlocksStory{}
