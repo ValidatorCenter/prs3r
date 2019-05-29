@@ -201,19 +201,6 @@ func srchNodeSql_pk(db *sqlx.DB, pub_key string) s.NodeExt {
 	return p
 }
 
-// Берем всех пользователей с новым % из SQL
-func srchNodeUserXSql(db *sqlx.DB) []s.NodeUserX {
-	// FIXME: надо как-то учитывать что период возврата Пользователю, может
-	// быть уже закончился!
-	pp := []s.NodeUserX{}
-	err := db.Select(&pp, "SELECT * FROM node_userx")
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] srchNodeUserXSql(Select) - ", err), "")
-		return []s.NodeUserX{}
-	}
-	return pp
-}
-
 // Берем все ноды из SQL
 func srchNodeSql_all(db *sqlx.DB) []s.NodeExt {
 	pp := []s.NodeExt{}
@@ -223,60 +210,6 @@ func srchNodeSql_all(db *sqlx.DB) []s.NodeExt {
 		return []s.NodeExt{}
 	}
 	return pp
-}
-
-// Добавить задачу для ноды в SQL
-func addNodeTaskSql(db *sqlx.DB, dt *s.NodeTodo) bool {
-	var err error
-	tx := db.MustBegin()
-
-	dt.UpdYCH = time.Now()
-
-	qPg := `
-		INSERT INTO node_tasks (
-			_id,
-			priority,
-			done,
-			created,
-			donet,
-			type,
-			height_i32,
-			pub_key,
-			address,
-			amount_f32,
-			comment,
-			tx_hash,
-			updated_date
-		) VALUES (
-			:_id,
-			:priority,
-			:done,
-			:created,
-			:donet,
-			:type,
-			:height_i32,
-			:pub_key,
-			:address,
-			:amount_f32,
-			:comment,
-			:tx_hash,
-			:updated_date
-		)`
-
-	_, err = tx.NamedExec(qPg, &dt)
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeTaskSql(NamedExec) -", err), "")
-		panic(err)
-		return false
-	}
-	log("INF", "INSERT", fmt.Sprint("node-task ", dt.Address, " ", dt.PubKey))
-
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeTaskSql(Commit() -", err), "")
-		return false
-	}
-	return true
 }
 
 //Поиск блоков-истории ноды по паблику
@@ -293,43 +226,4 @@ func srchNodeBlockstory(db *sqlx.DB, pub_key string) []s.BlocksStory {
 		return v
 	}
 	return v
-}
-
-// Добавляем условие акции для кошелька(пользователя)
-func addNodeUserX(db *sqlx.DB, dt *s.NodeUserX) bool {
-	var err error
-	tx := db.MustBegin()
-
-	dt.UpdYCH = time.Now()
-
-	qPg := `
-		INSERT INTO node_userx (
-			pub_key,
-			address,
-			start,
-			finish,
-			commission,
-			updated_date
-		) VALUES (
-			:pub_key,
-			:address,
-			:start,
-			:finish,
-			:commission,
-			:updated_date
-		)`
-
-	_, err = tx.NamedExec(qPg, &dt)
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeUserX(NamedExec) -", err), "")
-		return false
-	}
-	log("INF", "INSERT", fmt.Sprint("node-userx ", dt.Address, " ", dt.PubKey))
-
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_node.go] addNodeUserX(Commit) -", err), "")
-		return false
-	}
-	return true
 }

@@ -224,50 +224,6 @@ func ClearChSqlDB() {
 	dbSQL.MustExec(schemaCh_node_stakes)
 	log("OK", "...очищена - node_stakes", "")
 
-	////////////////////////////////////////////////////////////////////////////
-	// TODO: надо как-то другой ключ переделать
-	// Таблица содержит Задачи для валидатора/ноды (возвраты делегатам)
-	//(CH: таблица имеет обновляемые реквизиты... статус, дату выполнения и id-транзакция)
-	delCh_node_tasks := `DROP TABLE IF EXISTS node_tasks`
-	dbSQL.MustExec(delCh_node_tasks)
-	schemaCh_nodetodo := `
-			CREATE TABLE node_tasks (
-				_id UUID,
-				priority Int,
-				done UInt8,
-				created DateTime,
-				donet DateTime,
-				type String,
-				height_i32 UInt32,
-				pub_key String,
-				address String,
-				amount_f32 Float32,
-				comment String,
-				tx_hash String,
-				updated_date Date
-			) ENGINE = ReplacingMergeTree(updated_date, (_id), 8192)
-			` // использовать: SELECT * FROM node_tasks FINAL;
-	dbSQL.MustExec(schemaCh_nodetodo)
-	log("OK", "...очищена - node_tasks", "")
-
-	////////////////////////////////////////////////////////////////////////////
-	// Таблица содержит информацию для валидаторы об Уникальных % комиссии для
-	// определенных делегаторов
-	delCh_node_userx := `DROP TABLE IF EXISTS node_userx`
-	dbSQL.MustExec(delCh_node_userx)
-	schemaCh_nodeuserx := `
-			CREATE TABLE node_userx (
-				pub_key String,
-				address String,
-				start DateTime,
-				finish DateTime,
-				commission UInt32,
-				updated_date Date
-			) ENGINE=MergeTree(updated_date,(pub_key,address,start),8192)
-			`
-	dbSQL.MustExec(schemaCh_nodeuserx)
-	log("OK", "...очищена - node_userx", "")
-
 	/**************************************************************************/
 	/**************************************************************************/
 	/**************************************************************************/
@@ -316,25 +272,4 @@ func ClearChSqlDB() {
 	/**************************************************************************/
 	/**************************************************************************/
 	/**************************************************************************/
-
-	////////////////////////////////////////////////////////////////////////////
-	// Таблица содержит данные о настройка Автоделегатора для кошелька
-	delCh_autodeleg := `DROP TABLE IF EXISTS autodeleg`
-	dbSQL.MustExec(delCh_autodeleg)
-	schemaCh_autodeleg := `
-			CREATE TABLE autodeleg (
-				address String,
-				pub_key String,
-				coin String,
-				wallet_prc UInt32,
-				updated_date Date,
-				version Int8
-			) ENGINE=CollapsingMergeTree(updated_date,(address,pub_key,coin),8192,version)
-			` // использовать: SELECT * FROM autodeleg FINAL;
-	/*
-		Если при вставке указать version = -1, запись будет удалена.
-		При значениях version = 1 запись будет оставлена в таблице ОБНОВЛЕНА.
-	*/
-	dbSQL.MustExec(schemaCh_autodeleg)
-	log("OK", "...очищена - autodeleg", "")
 }
