@@ -19,6 +19,8 @@ var (
 	amntN_block      int    // всего блоков в сети
 	amntBlocksLoad   uint   // количество загружаемых блоков за раз
 	pauseBlocksLoad  uint   // паузе между загрузками блоков (сек)
+	pauseSystem      uint   // пауза между циклами и попытками при ошибках (сек)
+	pauseNodeUpd     uint   // пауза между обновлением информации о нодах (сек)
 	loadCorrection   uint   // на сколько блоков не дозагружать из блокчейна, если еще не синхронизировалось в блокчейне валидаторам подписантам
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
@@ -73,7 +75,8 @@ func main() {
 	// Загрузка блока с блок-чейна
 	for { // бесконечный цикл
 		appBlocks()
-		time.Sleep(time.Minute * 1) // пауза 1мин ....в этот момент лучше прерывать
+		log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+		time.Sleep(time.Second * time.Duration(pauseSystem)) // пауза ....в этот момент лучше прерывать
 	}
 
 	close(worketInputBlock)

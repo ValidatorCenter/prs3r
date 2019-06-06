@@ -154,7 +154,15 @@ func initParser() {
 	}
 	pauseBlocksLoad, err = secDB.Key("BLOCKS_LOAD_PAUSE").Uint()
 	if err != nil || pauseBlocksLoad == 0 {
-		pauseBlocksLoad = 1
+		pauseBlocksLoad = 10
+	}
+	pauseSystem, err = secDB.Key("SYSTEM_PAUSE").Uint()
+	if err != nil || pauseSystem == 0 {
+		pauseSystem = 10
+	}
+	pauseNodeUpd, err = secDB.Key("NODES_UPD_PAUSE").Uint()
+	if err != nil || pauseNodeUpd == 0 {
+		pauseNodeUpd = 60
 	}
 
 	r_db, err := secDB.Key("REDIS_DB").Int()
@@ -212,7 +220,8 @@ func initParser() {
 		mbch, err = sdk.GetStatus()
 		if err != nil {
 			log("ERR", fmt.Sprint("Подключение к Minter-", err.Error()), "")
-			time.Sleep(10 * time.Second) // ждём до новой попытки
+			log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+			time.Sleep(time.Second * time.Duration(pauseSystem)) // ждём до новой попытки
 		} else {
 			break
 		}

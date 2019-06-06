@@ -11,11 +11,8 @@ import (
 func appNodes_go() {
 	for { // бесконечный цикл
 		// Шаг 4, загрузка данных о валидаторах/кандидатах
-		time.Sleep(time.Minute * 1)
-
+		time.Sleep(time.Second * time.Duration(pauseNodeUpd))
 		appNodes()
-
-		time.Sleep(time.Minute * 1) // пауза 1мин
 	}
 }
 

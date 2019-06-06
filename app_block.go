@@ -51,7 +51,8 @@ func appBlocks() {
 			if err != nil {
 				//Возможно не доступна нода блокчейна, надо подождать а не паниковать
 				log("ERR", fmt.Sprint("[app_block.go] appBlocks(sdk.GetBlock) - ", err), "")
-				time.Sleep(10 * time.Second) // ждём до новой попытки
+				log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+				time.Sleep(time.Second * time.Duration(pauseSystem)) // ждём до новой попытки
 			} else {
 				break
 			}
