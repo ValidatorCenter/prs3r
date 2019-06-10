@@ -4,6 +4,7 @@
 * [Installing DB](#installing-in-ubuntu)
 * [Commands](#commands)
 * [Key benefits from PostgreSQL](#key-benefits-from-postgresql)
+* [Control](#control)
 
 ## About
 
@@ -59,3 +60,10 @@ prs3rd
 
 * Size of base on disk
 * Request execution speed
+
+## Control
+
+The operation of the parser can be controlled via the file - `act.json`. Two status "action":
+
+* "" - loading data
+* "stop" - stop the download. If it works, then it will happen - during the system pause (but do not interrupt until the parser itself works until this 'pause'); if at startup, it will exit immediately.
