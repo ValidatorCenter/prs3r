@@ -95,6 +95,4 @@ func main() {
 	close(worketInputBNode)
 
 	time.Sleep(20 * time.Second) // ждём чтобы наверняка завершилась корректно запись в БД при закрытие каналов
-	fmt.Println("конец, нажмите любую кнопку....")
-	fmt.Scanln()
 }
