@@ -74,7 +74,7 @@ func main() {
 
 	// Загрузка блока с блок-чейна
 	for { // бесконечный цикл
-		act, err = loadActJSON()
+		act, err := loadActJSON()
 		if err != nil {
 			log("ERR", fmt.Sprint("[main.go] main(loadActJSON) - ", err), "")
 		}
