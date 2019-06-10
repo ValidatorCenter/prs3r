@@ -68,7 +68,7 @@ type ConfigActSys struct {
 
 // загрузка файла act.json
 func loadActJSON() (string, error) {
-	file, _ := os.Open("act.json")
+	file, _ := os.Open(fmt.Sprintf("%s/act.json", Prs3rPath))
 	decoder := json.NewDecoder(file)
 	cfgStr := new(ConfigActSys)
 	err := decoder.Decode(&cfgStr)
@@ -162,6 +162,7 @@ func initParser() {
 	if err != nil || chanBNode == 0 {
 		chanBNode = c_chanBNode
 	}
+	Prs3rPath = secP3.Key("PRS3R_PATH").String()
 
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()

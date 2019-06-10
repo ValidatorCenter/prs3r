@@ -22,6 +22,7 @@ var (
 	pauseSystem      uint   // пауза между циклами и попытками при ошибках (сек)
 	pauseNodeUpd     uint   // пауза между обновлением информации о нодах (сек)
 	loadCorrection   uint   // на сколько блоков не дозагружать из блокчейна, если еще не синхронизировалось в блокчейне валидаторам подписантам
+	Prs3rPath        string // путь к каталогу парсера, там может лежать доп.файлы
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
 	worketInputTrx   chan TrxExt
