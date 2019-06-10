@@ -61,26 +61,9 @@ func loadStartJSON() bool {
 	return true
 }
 
-// Структура для файла "act.json"
-type ConfigActSys struct {
-	ActSys string `json:"action"`
-}
-
-// загрузка файла act.json
-func loadActJSON() (string, error) {
-	file, _ := os.Open(fmt.Sprintf("%s/act.json", Prs3rPath))
-	decoder := json.NewDecoder(file)
-	cfgStr := new(ConfigActSys)
-	err := decoder.Decode(&cfgStr)
-	if err != nil {
-		return "", err
-	}
-
-	return cfgStr.ActSys, err
-}
-
 // инициализация парсера, загрузка параметров
 func initParser() {
+	ParserIsActive = true
 	sdk.Debug = true
 	ConfFileName := "config.ini"
 	cmdClearDB := false
@@ -162,7 +145,6 @@ func initParser() {
 	if err != nil || chanBNode == 0 {
 		chanBNode = c_chanBNode
 	}
-	Prs3rPath = secP3.Key("PRS3R_PATH").String()
 
 	secDB := cfg.Section("database")
 	CoinMinter = ms.GetBaseCoin()

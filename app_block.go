@@ -7,6 +7,18 @@ import (
 	ms "github.com/ValidatorCenter/minter-go-sdk"
 )
 
+// Обвязка для модуля обработки Блоков
+func appBlocks_go() {
+	// Загрузка блока с блок-чейна
+	for { // бесконечный цикл
+		if ParserIsActive == true {
+			appBlocks()
+		}
+		log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+		time.Sleep(time.Second * time.Duration(pauseSystem)) // пауза ....в этот момент лучше прерывать
+	}
+}
+
 // получение сколько всего блоков в блокчейне
 func MinterLatestBlock() (int, error) {
 	sts, err := sdk.GetStatus()

@@ -9,11 +9,11 @@ require (
 	github.com/btcsuite/btcd v0.0.0-20190523000118-16327141da8c // indirect
 	github.com/danil-lashin/iavl v0.11.2 // indirect
 	github.com/fatih/color v1.7.0 // indirect
+	github.com/gin-gonic/gin v1.4.0 // indirect
 	github.com/go-kit/kit v0.8.0 // indirect
 	github.com/go-logfmt/logfmt v0.4.0 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
-	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/kshvakov/clickhouse v1.3.6 // indirect
 	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
