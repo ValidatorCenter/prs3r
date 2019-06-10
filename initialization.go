@@ -39,7 +39,7 @@ type ConfigStart struct {
 	AppCoin []s.CoinMarketCapData `json:"coins"`
 }
 
-// загрузка файла genesis.json
+// загрузка файла start.json
 func loadStartJSON() bool {
 	file, _ := os.Open("start.json")
 	decoder := json.NewDecoder(file)
@@ -59,6 +59,24 @@ func loadStartJSON() bool {
 	}
 
 	return true
+}
+
+// Структура для файла "act.json"
+type ConfigActSys struct {
+	ActSys string `json:"action"`
+}
+
+// загрузка файла act.json
+func loadActJSON() (string, error) {
+	file, _ := os.Open("act.json")
+	decoder := json.NewDecoder(file)
+	cfgStr := new(ConfigActSys)
+	err := decoder.Decode(&cfgStr)
+	if err != nil {
+		return "", err
+	}
+
+	return cfgStr.ActSys, err
 }
 
 // инициализация парсера, загрузка параметров

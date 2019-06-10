@@ -74,6 +74,16 @@ func main() {
 
 	// Загрузка блока с блок-чейна
 	for { // бесконечный цикл
+		act, err = loadActJSON()
+		if err != nil {
+			log("ERR", fmt.Sprint("[main.go] main(loadActJSON) - ", err), "")
+		}
+		if act == "stop" {
+			// выходим с программы
+			log("INF", "EXIT", "act.json -=> STOP")
+			break
+		}
+
 		appBlocks()
 		log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
 		time.Sleep(time.Second * time.Duration(pauseSystem)) // пауза ....в этот момент лучше прерывать
@@ -83,7 +93,7 @@ func main() {
 	close(worketInputTrx)
 	close(worketInputBNode)
 
-	time.Sleep(10 * time.Second) // ждём чтобы наверняка завершилась корректно запись в БД при закрытие каналов
+	time.Sleep(20 * time.Second) // ждём чтобы наверняка завершилась корректно запись в БД при закрытие каналов
 	fmt.Println("конец, нажмите любую кнопку....")
 	fmt.Scanln()
 }
