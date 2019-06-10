@@ -53,6 +53,10 @@ func appBlocks() {
 
 	step_amntBlocksLoad := uint(0) // считает сколько загрузили за раз
 	for i := actN_block; i <= amntN_block; i++ {
+		if ParserIsActive != true {
+			break
+		}
+
 		log("INF", "LOAD", fmt.Sprintf("=== БЛОК %d из %d", i, amntN_block))
 
 		// получаем блок по номеру i с блокчейна
