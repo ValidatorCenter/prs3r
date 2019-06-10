@@ -53,6 +53,7 @@ func appBlocks() {
 
 	step_amntBlocksLoad := uint(0) // считает сколько загрузили за раз
 	for i := actN_block; i <= amntN_block; i++ {
+		amntL_block = i
 		if ParserIsActive != true {
 			break
 		}

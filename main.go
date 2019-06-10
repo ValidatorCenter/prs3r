@@ -19,6 +19,7 @@ import (
 var (
 	CoinMinter       string // Основная монета Minter
 	amntN_block      int    // всего блоков в сети
+	amntL_block      int    // синхронизировано блоков из сети
 	amntBlocksLoad   uint   // количество загружаемых блоков за раз
 	pauseBlocksLoad  uint   // пауза между загрузками блоков (сек)
 	pauseSystem      uint   // пауза между циклами и попытками при ошибках (сек)
@@ -90,8 +91,8 @@ func main() {
 		c.JSON(200, gin.H{
 			"message":       "start",
 			"is_active":     ParserIsActive,
-			"current_block": amntN_block,    // всего блоков в сети
-			"sync_block":    amntBlocksLoad, // количество загружаемых блоков за раз
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
 		})
 	})
 	r.GET("/stop", func(c *gin.Context) {
@@ -99,8 +100,8 @@ func main() {
 		c.JSON(200, gin.H{
 			"message":       "stop",
 			"is_active":     ParserIsActive,
-			"current_block": amntN_block,    // всего блоков в сети
-			"sync_block":    amntBlocksLoad, // количество загружаемых блоков за раз
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
 		})
 	})
 	r.GET("/exit", func(c *gin.Context) {
@@ -120,8 +121,8 @@ func main() {
 		c.JSON(200, gin.H{
 			"message":       "status",
 			"is_active":     ParserIsActive,
-			"current_block": amntN_block,    // всего блоков в сети
-			"sync_block":    amntBlocksLoad, // количество загружаемых блоков за раз
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
 		})
 	})
 

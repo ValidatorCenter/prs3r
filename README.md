@@ -63,7 +63,7 @@ prs3rd
 
 ## Control
 
-* `localhost:8018/status` - parser status
-* `localhost:8018/start` - starting parser
-* `localhost:8018/stop` - stoping parser
-* `localhost:8018/exit` - exit
+* `curl localhost:8018/status` - parser status
+* `curl localhost:8018/start` - starting parser
+* `curl localhost:8018/stop` - stoping parser
+* `curl localhost:8018/exit` - exit
