@@ -10,12 +10,11 @@ import (
 // Обвязка для модуля обработки Нод
 func appNodes_go() {
 	for { // бесконечный цикл
-		// Шаг 4, загрузка данных о валидаторах/кандидатах
-		time.Sleep(time.Minute * 1)
-
-		appNodes()
-
-		time.Sleep(time.Minute * 1) // пауза 1мин
+		if ParserIsActive == true {
+			// Шаг 4, загрузка данных о валидаторах/кандидатах
+			appNodes()
+		}
+		time.Sleep(time.Second * time.Duration(pauseNodeUpd))
 	}
 }
 

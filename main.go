@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	ms "github.com/ValidatorCenter/minter-go-sdk"
+
+	//Gin web-framework
+	"github.com/gin-gonic/gin"
 
 	// SQL
 	"github.com/jmoiron/sqlx"
@@ -17,9 +19,13 @@ import (
 var (
 	CoinMinter       string // Основная монета Minter
 	amntN_block      int    // всего блоков в сети
+	amntL_block      int    // синхронизировано блоков из сети
 	amntBlocksLoad   uint   // количество загружаемых блоков за раз
-	pauseBlocksLoad  uint   // паузе между загрузками блоков (сек)
+	pauseBlocksLoad  uint   // пауза между загрузками блоков (сек)
+	pauseSystem      uint   // пауза между циклами и попытками при ошибках (сек)
+	pauseNodeUpd     uint   // пауза между обновлением информации о нодах (сек)
 	loadCorrection   uint   // на сколько блоков не дозагружать из блокчейна, если еще не синхронизировалось в блокчейне валидаторам подписантам
+	ParserIsActive   bool   // активен парсер Да/нет
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
 	worketInputTrx   chan TrxExt
@@ -42,6 +48,8 @@ var (
 )
 
 func main() {
+	// запуск GiN
+	r := gin.Default()
 
 	initParser()
 	defer dbSQL.Close()
@@ -70,17 +78,53 @@ func main() {
 	// Обновление информации о нодах
 	go appNodes_go()
 
-	// Загрузка блока с блок-чейна
-	for { // бесконечный цикл
-		appBlocks()
-		time.Sleep(time.Minute * 1) // пауза 1мин ....в этот момент лучше прерывать
-	}
+	// Обновление информации о блоках
+	go appBlocks_go()
 
-	close(worketInputBlock)
-	close(worketInputTrx)
-	close(worketInputBNode)
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.GET("/start", func(c *gin.Context) {
+		ParserIsActive = true
+		c.JSON(200, gin.H{
+			"message":       "start",
+			"is_active":     ParserIsActive,
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
+		})
+	})
+	r.GET("/stop", func(c *gin.Context) {
+		ParserIsActive = false
+		c.JSON(200, gin.H{
+			"message":       "stop",
+			"is_active":     ParserIsActive,
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
+		})
+	})
+	r.GET("/exit", func(c *gin.Context) {
+		ParserIsActive = false
+		time.Sleep(60 * time.Second) // ждём завершения работы горутин
 
-	time.Sleep(10 * time.Second) // ждём чтобы наверняка завершилась корректно запись в БД при закрытие каналов
-	fmt.Println("конец, нажмите любую кнопку....")
-	fmt.Scanln()
+		close(worketInputBlock)
+		close(worketInputTrx)
+		close(worketInputBNode)
+
+		time.Sleep(20 * time.Second) // ждём чтобы наверняка завершилась корректно запись в БД при закрытие каналов
+		c.JSON(200, gin.H{
+			"message": "exit",
+		})
+	})
+	r.GET("/status", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message":       "status",
+			"is_active":     ParserIsActive,
+			"current_block": amntN_block, // всего блоков в сети
+			"sync_block":    amntL_block, // синхронизировано блоков из сети
+		})
+	})
+
+	r.Run(":8018")
 }

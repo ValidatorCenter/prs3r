@@ -1,81 +1,130 @@
 {
- "app_userx": [
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx----------------------------------------",
-   "start": "2019-04-01T01:00:00Z",
-   "finish": "2019-04-30T23:59:59Z",
-   "commission": 2
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx----------------------------------------",
-   "start": "2019-05-01T01:00:00Z",
-   "finish": "2020-05-15T01:00:00Z",
-   "commission": 3
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx----------------------------------------",
-   "start": "2020-05-15T01:00:00Z",
-   "finish": "2021-05-15T01:00:00Z",
-   "commission": 6
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx----------------------------------------",
-   "start": "2021-05-15T01:00:00Z",
-   "finish": "2022-05-15T01:00:00Z",
-   "commission": 10
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx----------------------------------------",
-   "start": "2022-05-15T01:00:00Z",
-   "finish": "2023-05-15T01:00:00Z",
-   "commission": 13
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx58a1441883708813ba546345a0ed0ce765f1dad1",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 0
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mxd75a705f5f66b97e2937390e559144a63d670ef2",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 0
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx4c3a6180c56223bceb08f006539e5e48f8800736",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 5
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mxf14cbe2e3e9a938d1fcfc293ec8206367875f477",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 5
-  },  
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mx1f97656052aa2a4a55eba61e02d1550eba677d82",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 5
-  },
-  {
-   "pub_key": "Mp77774337c2212ce5a9b57b9392daf5e11639f7fd38e1a16a584291ed3a98b777",
-   "address": "Mxc36bb7cae45a3ee2079c519a04981af55dfff988",
-   "start": "2019-01-01T17:00:00Z",
-   "finish": "2034-04-02T17:00:00Z",
-   "commission": 5
-  }
- ]
+ "coins": [
+      {
+        "name": "BTC.Secure Coin",
+        "symbol": "BTCSECURE",
+        "initial_amount_f32": 34893745.683603776117789541,
+        "constant_reserve_ratio": 50,
+        "initial_reserve_f32": 1352859.430924463507885068
+      },
+      {
+        "name": "CINEMACOIN",
+        "symbol": "CINEMACOIN",
+        "initial_amount_f32": 11131451.878758401613402296,
+        "constant_reserve_ratio": 20,
+        "initial_reserve_f32": 774.673143980449659869
+      },
+      {
+        "name": "crashcoin2",
+        "symbol": "CRASHCOIN2",
+        "initial_amount_f32": 2.511911549243618024,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 100010.000000000000165931
+      },
+      {
+        "name": "CREDITOR02",
+        "symbol": "CREDITOR02",
+        "initial_amount_f32": 1150904.581891396541414620,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4077.492683780760038823
+      },
+      {
+        "name": "CREDITOR03",
+        "symbol": "CREDITOR03",
+        "initial_amount_f32": 1127008.007292187311119358,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 3305.750077649801170423
+      },
+      {
+        "name": "creditor04",
+        "symbol": "CREDITOR04",
+        "initial_amount_f32": 1159961.507441308263943527,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4409.971440119734991275
+      },
+      {
+        "name": "CREDITOR1",
+        "symbol": "CREDITOR1",
+        "initial_amount_f32": 1266959.447918532200550153,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 10656.808082423660118139
+      },
+      {
+        "name": "CrocodileCoin",
+        "symbol": "CROCCOIN",
+        "initial_amount_f32": 26818600.571355818739614740,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 11539.000000000000000000
+      },
+      {
+        "name": "cyberpunk",
+        "symbol": "CYBERPUNK",
+        "initial_amount_f32": 586210.523328266515802152,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 73608.390143209125488731
+      },
+      {
+        "name": "ETHEREUM",
+        "symbol": "ETHEREUM",
+        "initial_amount_f32": 146.705161177491393480,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 461.800000000000000000
+      },
+      {
+        "name": "EVSCAPITAL",
+        "symbol": "EVSCAPITAL",
+        "initial_amount_f32": 1374.024913679970861322,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 23985.350751390567669338
+      },
+      {
+        "name": "Kamanero",
+        "symbol": "KAMANERO",
+        "initial_amount_f32": 100.000000000000000000,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 101.000000000000000000
+      },
+      {
+        "name": "Minter Coin",
+        "symbol": "MINTERC",
+        "initial_amount_f32": 2243803.861525085652718862,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 323481.099771421509978594
+      },
+      {
+        "name": "MoyaMoneta",
+        "symbol": "MOYMONA",
+        "initial_amount_f32": 1183368.711772469685725640,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 5385.187432708888863368
+      },
+      {
+        "name": "Rundax",
+        "symbol": "RUNDAX",
+        "initial_amount_f32": 1179114.267818269387749891,
+        "constant_reserve_ratio": 41,
+        "initial_reserve_f32": 149460.548627548580571026
+      },
+      {
+        "name": "sotoviK05",
+        "symbol": "SOTOVIK05",
+        "initial_amount_f32": 1162801.468247823283334850,
+        "constant_reserve_ratio": 10,
+        "initial_reserve_f32": 4519.139157602970069710
+      },
+      {
+        "name": "TESTCOIN01",
+        "symbol": "TESTCOIN01",
+        "initial_amount_f32": 1000.990009940159192996,
+        "constant_reserve_ratio": 50,
+        "initial_reserve_f32": 500.990500000000000003
+      },
+      {
+        "name": "Validator center",
+        "symbol": "VALIDATOR",
+        "initial_amount_f32": 187517.222529425225120228,
+        "constant_reserve_ratio": 73,
+        "initial_reserve_f32": 55448.780919861286564385
+      }
+	]
 }

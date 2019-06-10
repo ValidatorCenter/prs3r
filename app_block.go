@@ -7,6 +7,18 @@ import (
 	ms "github.com/ValidatorCenter/minter-go-sdk"
 )
 
+// Обвязка для модуля обработки Блоков
+func appBlocks_go() {
+	// Загрузка блока с блок-чейна
+	for { // бесконечный цикл
+		if ParserIsActive == true {
+			appBlocks()
+		}
+		log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+		time.Sleep(time.Second * time.Duration(pauseSystem)) // пауза ....в этот момент лучше прерывать
+	}
+}
+
 // получение сколько всего блоков в блокчейне
 func MinterLatestBlock() (int, error) {
 	sts, err := sdk.GetStatus()
@@ -41,6 +53,11 @@ func appBlocks() {
 
 	step_amntBlocksLoad := uint(0) // считает сколько загрузили за раз
 	for i := actN_block; i <= amntN_block; i++ {
+		amntL_block = i
+		if ParserIsActive != true {
+			break
+		}
+
 		log("INF", "LOAD", fmt.Sprintf("=== БЛОК %d из %d", i, amntN_block))
 
 		// получаем блок по номеру i с блокчейна
@@ -51,7 +68,8 @@ func appBlocks() {
 			if err != nil {
 				//Возможно не доступна нода блокчейна, надо подождать а не паниковать
 				log("ERR", fmt.Sprint("[app_block.go] appBlocks(sdk.GetBlock) - ", err), "")
-				time.Sleep(10 * time.Second) // ждём до новой попытки
+				log("INF", "PAUSE", fmt.Sprintf("%dsec", pauseSystem))
+				time.Sleep(time.Second * time.Duration(pauseSystem)) // ждём до новой попытки
 			} else {
 				break
 			}

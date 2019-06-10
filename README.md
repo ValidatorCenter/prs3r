@@ -4,6 +4,7 @@
 * [Installing DB](#installing-in-ubuntu)
 * [Commands](#commands)
 * [Key benefits from PostgreSQL](#key-benefits-from-postgresql)
+* [Control](#control)
 
 ## About
 
@@ -59,3 +60,10 @@ prs3rd
 
 * Size of base on disk
 * Request execution speed
+
+## Control
+
+* `curl localhost:8018/status` - parser status
+* `curl localhost:8018/start` - starting parser
+* `curl localhost:8018/stop` - stoping parser
+* `curl localhost:8018/exit` - exit
