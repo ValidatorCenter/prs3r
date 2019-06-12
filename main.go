@@ -8,9 +8,9 @@ import (
 	//Gin web-framework
 	"github.com/gin-gonic/gin"
 
-	// SQL
-	"github.com/jmoiron/sqlx"
-	_ "github.com/kshvakov/clickhouse"
+	// SQL (mail.ru)
+	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 
 	// Redis
 	"github.com/go-redis/redis"
@@ -28,8 +28,8 @@ var (
 	ParserIsActive   bool   // активен парсер Да/нет
 	sdk              ms.SDK
 	worketInputBlock chan ms.BlockResponse
-	worketInputTrx   chan TrxExt
-	worketInputBNode chan B1NExt
+	worketInputTrx   chan ms.BlockResponse
+	worketInputBNode chan ms.BlockResponse
 	worketInputBEvnt chan uint32
 
 	workerBlock uint
@@ -43,7 +43,7 @@ var (
 	workerBNode uint
 	chanBNode   uint
 
-	dbSQL *sqlx.DB
+	dbSQL *dbr.Connection
 	dbSys *redis.Client
 )
 
@@ -57,10 +57,11 @@ func main() {
 
 	// создаём каналы
 	worketInputBlock = make(chan ms.BlockResponse, chanBlock)
-	worketInputTrx = make(chan TrxExt, chanTrx)
-	worketInputBNode = make(chan B1NExt, chanBNode)
+	worketInputTrx = make(chan ms.BlockResponse, chanTrx)
+	worketInputBNode = make(chan ms.BlockResponse, chanBNode)
 	worketInputBEvnt = make(chan uint32, chanBEvnt)
 
+	///////////////////////////////////////
 	// запуск воркеров-демонов
 	for i := uint(0); i < workerBlock; i++ {
 		go startWorkerBlock(i, worketInputBlock)
@@ -75,11 +76,13 @@ func main() {
 		go startWorkerBEvnt(i, worketInputBEvnt)
 	}
 
-	// Обновление информации о нодах
-	go appNodes_go()
+	///////////////////////////////////////
+	// запуск демонов основных служб
+	go appNodes_go()  // Обновление информации о нодах
+	go appBlocks_go() // Обновление информации о блоках
 
-	// Обновление информации о блоках
-	go appBlocks_go()
+	///////////////////////////////////////
+	// запуск веб-службы упревления
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

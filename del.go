@@ -17,10 +17,12 @@ func ClearChSqlDB() {
 	/**************************************************************************/
 	/**************************************************************************/
 
+	sess := dbSQL.NewSession(nil)
+
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит основные данные о Блоке
 	delCh_blocks := `DROP TABLE IF EXISTS blocks`
-	dbSQL.MustExec(delCh_blocks)
+	sess.Exec(delCh_blocks)
 	schemaCh_blocks := `
 			CREATE TABLE blocks (
 				hash String,
@@ -35,14 +37,14 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date,(height_i32),8192)
 			`
-	dbSQL.MustExec(schemaCh_blocks)
+	sess.Exec(schemaCh_blocks)
 	log("OK", "...очищена - blocks", "")
 
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит информацию о подписантах блока (связка: паблик
 	// валидатора и номер блока)
 	delCh_block_valid := `DROP TABLE IF EXISTS block_valid`
-	dbSQL.MustExec(delCh_block_valid)
+	sess.Exec(delCh_block_valid)
 	schemaCh_block_valid := `
 			CREATE TABLE block_valid (
 				height_i32 UInt32,
@@ -51,7 +53,7 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date,(height_i32,pub_key),8192)
 			`
-	dbSQL.MustExec(schemaCh_block_valid)
+	sess.Exec(schemaCh_block_valid)
 	log("OK", "...очищена - block_valid", "")
 
 	////////////////////////////////////////////////////////////////////////////
@@ -76,7 +78,7 @@ func ClearChSqlDB() {
 	) ENGINE = MergeTree(updated_date,(height_i32,type,role,address,validator_pub_key),8192)
 	`*/
 	delCh_block_event := `DROP TABLE IF EXISTS block_event`
-	dbSQL.MustExec(delCh_block_event)
+	sess.Exec(delCh_block_event)
 	schemaCh_block_event := `
 			CREATE TABLE block_event (
 				_id UUID,
@@ -91,7 +93,7 @@ func ClearChSqlDB() {
 			) ENGINE = MergeTree(updated_date,(_id),8192)
 			`
 
-	dbSQL.MustExec(schemaCh_block_event)
+	sess.Exec(schemaCh_block_event)
 	log("OK", "...очищена - block_event", "")
 
 	/**************************************************************************/
@@ -101,7 +103,7 @@ func ClearChSqlDB() {
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит основные данные о Транзакции
 	delCh_trx := `DROP TABLE IF EXISTS trx`
-	dbSQL.MustExec(delCh_trx)
+	sess.Exec(delCh_trx)
 	schemaCh_trx := `
 			CREATE TABLE trx (
 				hash String,
@@ -123,13 +125,13 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date,(hash),8192)
 			`
-	dbSQL.MustExec(schemaCh_trx)
+	sess.Exec(schemaCh_trx)
 	log("OK", "...очищена - trx", "")
 
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица специфичных данных Транзакции, зависит от типа транзакци
 	delCh_trx_data := `DROP TABLE IF EXISTS trx_data`
-	dbSQL.MustExec(delCh_trx_data)
+	sess.Exec(delCh_trx_data)
 	schemaCh_trx_data := `
 			CREATE TABLE trx_data (
 				hash String,
@@ -157,7 +159,7 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date,(hash),8192)
 			`
-	dbSQL.MustExec(schemaCh_trx_data)
+	sess.Exec(schemaCh_trx_data)
 	log("OK", "...очищена - trx_data", "")
 
 	/**************************************************************************/
@@ -170,7 +172,7 @@ func ClearChSqlDB() {
 	// Оставляем: ReplacingMergeTree т.к. reward_address или owner_address
 	// могут поменяться Tx
 	delCh_nodes := `DROP TABLE IF EXISTS nodes`
-	dbSQL.MustExec(delCh_nodes)
+	sess.Exec(delCh_nodes)
 	schemaCh_nodes := `
 			CREATE TABLE nodes (
 				pub_key String,
@@ -185,7 +187,7 @@ func ClearChSqlDB() {
 			) ENGINE = ReplacingMergeTree(updated_date, (pub_key), 8192)
 			` // использовать: SELECT * FROM nodes FINAL;
 	//FIXME: удалить total_stake_f32, переехал в MEM.DB
-	dbSQL.MustExec(schemaCh_nodes)
+	sess.Exec(schemaCh_nodes)
 	log("OK", "...очищена - nodes", "")
 
 	////////////////////////////////////////////////////////////////////////////
@@ -193,7 +195,7 @@ func ClearChSqlDB() {
 	// Таблица содержит историческую информацию о Валидаторе/ноде для него
 	// значимых блоках (создание, пропуск блока, штраф, вкл/выкл)
 	delCh_node_blockstory := `DROP TABLE IF EXISTS node_blockstory`
-	dbSQL.MustExec(delCh_node_blockstory)
+	sess.Exec(delCh_node_blockstory)
 	schemaCh_node_blockstory := `
 			CREATE TABLE node_blockstory (
 				pub_key String,
@@ -202,7 +204,7 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date,(pub_key,block_id,block_type),8192)
 			`
-	dbSQL.MustExec(schemaCh_node_blockstory)
+	sess.Exec(schemaCh_node_blockstory)
 	log("OK", "...очищена - node_blockstory", "")
 
 	////////////////////////////////////////////////////////////////////////////
@@ -210,7 +212,7 @@ func ClearChSqlDB() {
 	// эквиваленте от базовой монеты)
 	//(CH: таблица имеет обновляемые реквизиты... почти все параметры)
 	delCh_node_stakes := `DROP TABLE IF EXISTS node_stakes`
-	dbSQL.MustExec(delCh_node_stakes)
+	sess.Exec(delCh_node_stakes)
 	schemaCh_node_stakes := `
 			CREATE TABLE node_stakes (
 				pub_key String,
@@ -221,7 +223,7 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = ReplacingMergeTree(updated_date, (pub_key,owner_address,coin), 8192)
 			` // использовать: SELECT * FROM node_stakes FINAL;
-	dbSQL.MustExec(schemaCh_node_stakes)
+	sess.Exec(schemaCh_node_stakes)
 	log("OK", "...очищена - node_stakes", "")
 
 	/**************************************************************************/
@@ -231,7 +233,7 @@ func ClearChSqlDB() {
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит основные данные о кастомной Монете
 	delCh_coin := `DROP TABLE IF EXISTS coins`
-	dbSQL.MustExec(delCh_coin)
+	sess.Exec(delCh_coin)
 	schemaCh_coins := `
 			CREATE TABLE coins (
 				name String,
@@ -244,14 +246,14 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE = MergeTree(updated_date, (symbol), 8192)
 			`
-	dbSQL.MustExec(schemaCh_coins)
+	sess.Exec(schemaCh_coins)
 	log("OK", "...очищена - coin", "")
 
 	////////////////////////////////////////////////////////////////////////////
 	// Таблица содержит данные о движение кастомных Монет {из транзакции} (ОСТАВИТЬ!!!)
 	// некоторые поля расчетные и в дальнейшем облегчено получение данных для DEX
 	delCh_coin_trx := `DROP TABLE IF EXISTS coin_trx`
-	dbSQL.MustExec(delCh_coin_trx)
+	sess.Exec(delCh_coin_trx)
 	schemaCh_coin_trx := `
 			CREATE TABLE coin_trx (
 				hash String,
@@ -266,7 +268,7 @@ func ClearChSqlDB() {
 				updated_date Date
 			) ENGINE=MergeTree(updated_date,(hash),8192)
 			`
-	dbSQL.MustExec(schemaCh_coin_trx)
+	sess.Exec(schemaCh_coin_trx)
 	log("OK", "...очищена - coin_trx", "")
 
 	/**************************************************************************/

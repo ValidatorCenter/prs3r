@@ -8,8 +8,9 @@ import (
 	ms "github.com/ValidatorCenter/minter-go-sdk"
 	s "github.com/ValidatorCenter/prs3r/strc"
 
-	"github.com/jmoiron/sqlx"
-	_ "github.com/kshvakov/clickhouse"
+	// SQL (mail.ru)
+	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 )
 
 // Возвращает сумму в Bip которая прошла по транзакции
@@ -92,616 +93,129 @@ func returnAmntDataTx(txType int, txData interface{}) float32 {
 
 }
 
-// Добавить транзакцию в SQL
-func addTrxSql(db *sqlx.DB, dt *ms.TransResponse) bool {
+type TrxEx struct {
+	ms.TransResponse
+	TxReturn     float32   `json:"tags_return" db:"tags_return"`
+	TxSellAmount float32   `json:"tags_sellamnt" db:"tags_sellamnt"`
+	AmountBip    float32   `json:"amount_bip_f32" db:"amount_bip_f32"`
+	Upd          time.Time `json:"updated_date" db:"updated_date"`
+}
+
+// Добавить транзакции блока в SQL
+func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 	var err error
 
-	// Транзакция в SQL: http://jmoiron.github.io/sqlx/#transactions
-	tx := db.MustBegin()
-	qPg_Tx := `
-	INSERT INTO trx (
-		hash,
-		raw_tx,
-		height_i32,
-		index_i32,
-		from_adrs,
-		nonce_i32,
-		gas_price_i32,
-		gas_coin,
-		gas_used_i32,
-		type,
-		amount_bip_f32,
-		payload,
-		tags_return,
-		tags_sellamnt,
-		code,
-		log,
-		updated_date
-	) VALUES (
-		:hash,
-		:raw_tx,
-		:height_i32,
-		:index_i32,
-		:from_adrs,
-		:nonce_i32,
-		:gas_price_i32,
-		:gas_coin,
-		:gas_used_i32,
-		:type,
-		:amount_bip_f32,
-		:payload,
-		:tags_return,
-		:tags_sellamnt,
-		:code,
-		:log,
-		:updated_date
-	)
-	`
-	m1 := map[string]interface{}{
-		"hash":           dt.Hash,
-		"raw_tx":         dt.RawTx,
-		"height_i32":     dt.Height,
-		"index_i32":      dt.Index,
-		"from_adrs":      dt.From,
-		"nonce_i32":      dt.Nonce,
-		"gas_price_i32":  dt.GasPrice,
-		"gas_coin":       dt.GasCoin,
-		"gas_used_i32":   dt.GasUsed,
-		"type":           dt.Type,
-		"amount_bip_f32": returnAmntDataTx(dt.Type, dt.Data),
-		"payload":        dt.Payload,
-		"tags_return":    dt.Tags.TxReturn,
-		"tags_sellamnt":  dt.Tags.TxSellAmount,
-		"code":           dt.Code,
-		"log":            dt.Log,
-		"updated_date":   time.Now(),
+	sess := db.NewSession(nil)
+
+	stmt := sess.InsertInto("trx").Columns(
+		"hash",
+		"raw_tx",
+		"height_i32",
+		"index_i32",
+		"from_adrs",
+		"nonce_i32",
+		"gas_price_i32",
+		"gas_coin",
+		"gas_used_i32",
+		"type",
+		"amount_bip_f32",
+		"payload",
+		"tags_return",
+		"tags_sellamnt",
+		"code",
+		"log",
+		"updated_date")
+
+	for _, oneTrx := range dt.Transactions {
+		o1 := TrxEx{}
+		o1.Hash = oneTrx.Hash
+		o1.RawTx = oneTrx.RawTx
+		o1.Height = oneTrx.Height
+		o1.Index = oneTrx.Index
+		o1.From = oneTrx.From
+		o1.Nonce = oneTrx.Nonce
+		o1.GasPrice = oneTrx.GasPrice
+		o1.GasCoin = oneTrx.GasCoin
+		o1.GasUsed = oneTrx.GasUsed
+		o1.Type = oneTrx.Type
+		o1.Payload = oneTrx.Payload
+		o1.TxReturn = oneTrx.Tags.TxReturn
+		o1.TxSellAmount = oneTrx.Tags.TxSellAmount
+		o1.Code = oneTrx.Code
+		o1.Log = oneTrx.Log
+		o1.AmountBip = returnAmntDataTx(oneTrx.Type, oneTrx.Data)
+		o1.Upd = time.Now()
+
+		stmt.Record(o1)
 	}
-	_, err = tx.NamedExec(qPg_Tx, m1)
+
+	_, err = stmt.Exec()
 	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSql(NamedExec --> trx) - ", err, dt), "")
+		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSql(Exec) - ", err), "")
 		return false
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSql(Commit --> trx) - ", err), "")
-		return false
-	}
 	log("INF", "INSERT", fmt.Sprint("trx ", dt.Hash))
-
 	return true
 }
 
-// Добавить данные транзакции в SQL
-func addTrxDataSql(db *sqlx.DB, dt *ms.TransResponse) bool {
-	var err error
-	tx := db.MustBegin()
-	qPg_TxDt := ""
-	m2 := map[string]interface{}{}
-
-	switch dt.Type {
-	case ms.TX_SendData: //1
-		dt0 := s.Tx1SendData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin,
-			to_adrs,
-			value_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin,
-			:to_adrs,
-			:value_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"coin":         dt0.Coin,
-			"to_adrs":      dt0.To,
-			"value_f32":    dt0.Value,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_SellCoinData: //2
-		dt0 := s.Tx2SellCoinData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin_to_sell,
-			coin_to_buy,
-			value_to_sell_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin_to_sell,
-			:coin_to_buy,
-			:value_to_sell_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":              dt.Hash,
-			"coin_to_sell":      dt0.CoinToSell,
-			"coin_to_buy":       dt0.CoinToBuy,
-			"value_to_sell_f32": dt0.ValueToSell,
-			"updated_date":      time.Now(),
-		}
-	case ms.TX_SellAllCoinData: //3
-		dt0 := s.Tx3SellAllCoinData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin_to_sell,
-			coin_to_buy,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin_to_sell,
-			:coin_to_buy,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"coin_to_sell": dt0.CoinToSell,
-			"coin_to_buy":  dt0.CoinToBuy,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_BuyCoinData: //4
-		dt0 := s.Tx4BuyCoinData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin_to_sell,
-			coin_to_buy,			
-			value_to_buy_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin_to_sell,
-			:coin_to_buy,
-			:value_to_buy_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":             dt.Hash,
-			"coin_to_sell":     dt0.CoinToSell,
-			"coin_to_buy":      dt0.CoinToBuy,
-			"value_to_buy_f32": dt0.ValueToBuy,
-			"updated_date":     time.Now(),
-		}
-	case ms.TX_CreateCoinData: //5
-		dt0 := s.Tx5CreateCoinData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			name,
-			symbol,
-			constant_reserve_ratio,
-			initial_amount_f32,
-			initial_reserve_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:name,
-			:symbol,
-			:constant_reserve_ratio,
-			:initial_amount_f32,
-			:initial_reserve_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":                   dt.Hash,
-			"name":                   dt0.Name,
-			"symbol":                 dt0.CoinSymbol,
-			"constant_reserve_ratio": dt0.ConstantReserveRatio,
-			"initial_amount_f32":     dt0.InitialAmount,
-			"initial_reserve_f32":    dt0.InitialReserve,
-			"updated_date":           time.Now(),
-		}
-	case ms.TX_DeclareCandidacyData: //6
-		dt0 := s.Tx6DeclareCandidacyData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin,
-			address,
-			pub_key,
-			commission,
-			stake_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin,
-			:address,
-			:pub_key,
-			:commission,
-			:stake_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"coin":         dt0.Coin,
-			"address":      dt0.Address,
-			"pub_key":      dt0.PubKey,
-			"commission":   dt0.Commission,
-			"stake_f32":    dt0.Stake,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_DelegateDate: //7
-		dt0 := s.Tx7DelegateDate{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin,
-			pub_key,
-			stake_f32,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin,
-			:pub_key,
-			:stake_f32,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"coin":         dt0.Coin,
-			"pub_key":      dt0.PubKey,
-			"stake_f32":    dt0.Stake,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_UnbondData: //8
-		dt0 := s.Tx8UnbondData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin,
-			value_f32,
-			pub_key,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin,
-			:value_f32,
-			:pub_key,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"coin":         dt0.Coin,
-			"value_f32":    dt0.Value,
-			"pub_key":      dt0.PubKey,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_RedeemCheckData: //9
-		dt0 := s.Tx9RedeemCheckData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			raw_check,
-			proof,
-			updated_date
-		) VALUES (
-			:hash,
-			:raw_check,
-			:proof,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"raw_check":    dt0.RawCheck,
-			"proof":        dt0.Proof,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_SetCandidateOnData: //10
-		dt0 := s.Tx10SetCandidateOnData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			pub_key,
-			updated_date
-		) VALUES (
-			:hash,
-			:pub_key,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"pub_key":      dt0.PubKey,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_SetCandidateOffData: //11
-		dt0 := s.Tx11SetCandidateOffData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			pub_key,
-			updated_date
-		) VALUES (
-			:hash,
-			:pub_key,
-			:updated_date
-		)`
-		m2 = map[string]interface{}{
-			"hash":         dt.Hash,
-			"pub_key":      dt0.PubKey,
-			"updated_date": time.Now(),
-		}
-	case ms.TX_CreateMultisigData: //12
-		// TODO: Реализовать
-		/*dt0 := s.Tx12CreateMultisigData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = ``
-		m2 = map[string]interface{}{}*/
-	case ms.TX_MultisendData: //13
-		dt0 := s.Tx13MultisendData{}
-		jsonBytes, _ := json.Marshal(dt.Data)
-		json.Unmarshal(jsonBytes, &dt0)
-		qPg_TxDt = `
-		INSERT INTO trx_data (
-			hash,
-			coin_13a,
-			to_13a,
-			value_f32_13a,
-			updated_date
-		) VALUES (
-			:hash,
-			:coin_13a,
-			:to_13a,
-			:value_f32_13a,
-			:updated_date
-		)`
-
-		c_a := []string{}
-		t_a := []string{}
-		v_a := []float32{}
-
-		for _, dt1 := range dt0.List {
-			c_a = append(c_a, dt1.Coin)
-			t_a = append(t_a, dt1.To)
-			v_a = append(v_a, dt1.Value)
-		}
-
-		m2 = map[string]interface{}{
-			"hash":          dt.Hash,
-			"coin_13a":      c_a,
-			"to_13a":        t_a,
-			"value_f32_13a": v_a,
-			"updated_date":  time.Now(),
-		}
-	case ms.TX_EditCandidateData: //14
-		// TODO: реализовать этап №14
-		log("WRN", "[sql_trx.go] addTrxDataSql(ms.TX_EditCandidateData) - НЕ РЕАЛИЗОВАН!", "")
-		return false
-	default:
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(...) - неизвестный статус dt.Type - ", dt.Type), "")
-		return false
-	}
-
-	_, err = tx.NamedExec(qPg_TxDt, m2)
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(NamedExec --> trx_data) - [type №", dt.Type, ", hash=", m2["hash"], "] - ", err), "")
-		log("ERR", fmt.Sprint("%#v", m2), "")
-		panic(err)
-		return false
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Commit --> trx_data) - ", err), "")
-		return false
-	}
-	log("INF", "INSERT", fmt.Sprint("trx_data ", dt.Hash))
-	return true
-}
-
-// Добавить массив транзакций в SQL
-func addTrxSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
-	var err error
-
-	// Транзакция в SQL: http://jmoiron.github.io/sqlx/#transactions
-	tx := db.MustBegin()
-	qPg_Tx := `
-	INSERT INTO trx (
-		hash,
-		raw_tx,
-		height_i32,
-		index_i32,
-		from_adrs,
-		nonce_i32,
-		gas_price_i32,
-		gas_coin,
-		gas_used_i32,
-		type,
-		amount_bip_f32,
-		payload,
-		tags_return,
-		tags_sellamnt,
-		code,
-		log,
-		updated_date
-	) VALUES %s
-	`
-	strValue := `(
-		:hash,
-		:raw_tx,
-		:height_i32,
-		:index_i32,
-		:from_adrs,
-		:nonce_i32,
-		:gas_price_i32,
-		:gas_coin,
-		:gas_used_i32,
-		:type,
-		:amount_bip_f32,
-		:payload,
-		:tags_return,
-		:tags_sellamnt,
-		:code,
-		:log,
-		:updated_date
-	)`
-	strValueAll := ""
-	for iStp, dt := range *dtSlc {
-		str1 := strValue
-		m1 := map[string]interface{}{
-			"hash":           dt.Hash,
-			"raw_tx":         dt.RawTx,
-			"height_i32":     dt.Height,
-			"index_i32":      dt.Index,
-			"from_adrs":      dt.From,
-			"nonce_i32":      dt.Nonce,
-			"gas_price_i32":  dt.GasPrice,
-			"gas_coin":       dt.GasCoin,
-			"gas_used_i32":   dt.GasUsed,
-			"type":           dt.Type,
-			"amount_bip_f32": returnAmntDataTx(dt.Type, dt.Data),
-			"payload":        dt.Payload,
-			"tags_return":    dt.Tags.TxReturn,
-			"tags_sellamnt":  dt.Tags.TxSellAmount,
-			"code":           dt.Code,
-			"log":            dt.Log,
-			"updated_date":   time.Now().Format("2006-01-02"),
-		}
-		str1, err := mapReplace(str1, m1)
-		if err != nil {
-			log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(mapReplace) - ", err), "")
-			return false
-		}
-		if len(*dtSlc) > 1 {
-			if iStp == 0 {
-				strValueAll = str1
-			} else {
-				strValueAll = fmt.Sprintf("%s, %s", strValueAll, str1)
-			}
-		} else {
-			strValueAll = str1
-		}
-	}
-	qPg_Tx2 := fmt.Sprintf(qPg_Tx, strValueAll)
-
-	tx.MustExec(qPg_Tx2)
-
-	err = tx.Commit()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(Commit --> trx) - ", err), "")
-		return false
-	}
-	log("INF", "INSERT", fmt.Sprint("trx amount=", len(*dtSlc)))
-
-	return true
+type OneTrxData struct {
+	Hash        string    `db:"hash"`
+	Coin        string    `db:"coin"`
+	ToAddress   string    `db:"to_adrs"`
+	Value       float32   `db:"value_f32"`
+	CoinToSell  string    `db:"coin_to_sell"`
+	CoinToBuy   string    `db:"coin_to_buy"`
+	ValueToSell float32   `db:"value_to_sell_f32"`
+	ValueToBuy  float32   `db:"value_to_buy_f32"`
+	Name        string    `db:"name"`
+	Symbol      string    `db:"symbol"`
+	CRR         uint32    `db:"constant_reserve_ratio"`
+	InitAmount  float32   `db:"initial_amount_f32"`
+	InitReserve float32   `db:"initial_reserve_f32"`
+	Address     string    `db:"address"`
+	PubKey      string    `db:"pub_key"`
+	Commission  uint32    `db:"commission"`
+	Stake       float32   `db:"stake_f32"`
+	RawCheck    string    `db:"raw_check"`
+	Proof       string    `db:"proof"`
+	CoinArr     []string  `db:"coin_13a"`
+	ToArr       []string  `db:"to_13a"`
+	ValueArr    []float32 `db:"value_f32_13a"`
+	Upd         time.Time `db:"updated_date"`
 }
 
 // Добавить данные транзакций в SQL
-func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
+func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 	var err error
-	tx := db.MustBegin()
+	sess := db.NewSession(nil)
 
-	qPg_Tx := `
-	INSERT INTO trx_data (
-		hash,
-		coin,
-		to_adrs,
-		value_f32,
-		coin_to_sell,
-		coin_to_buy,
-		value_to_sell_f32,
-		value_to_buy_f32,
-		name,
-		symbol,
-		constant_reserve_ratio,
-		initial_amount_f32,
-		initial_reserve_f32,
-		address,
-		pub_key,
-		commission,
-		stake_f32,
-		raw_check,
-		proof,
-		coin_13a,
-		to_13a,
-		value_f32_13a,
-		updated_date
-	) VALUES %s
-	`
-	strValue := `(
-		:hash,
-		:coin,
-		:to_adrs,
-		:value_f32,
-		:coin_to_sell,
-		:coin_to_buy,
-		:value_to_sell_f32,
-		:value_to_buy_f32,
-		:name,
-		:symbol,
-		:constant_reserve_ratio,
-		:initial_amount_f32,
-		:initial_reserve_f32,
-		:address,
-		:pub_key,
-		:commission,
-		:stake_f32,
-		:raw_check,
-		:proof,
-		:coin_13a,
-		:to_13a,
-		:value_f32_13a,
-		:updated_date
-	)`
-	strValueAll := ""
-
-	for iStp, dt := range *dtSlc {
-		str1 := strValue
-		m2 := map[string]interface{}{}
-		m1 := map[string]interface{}{
-			"hash":                   "",
-			"coin":                   "",
-			"to_adrs":                "",
-			"value_f32":              float32(0),
-			"coin_to_sell":           "",
-			"coin_to_buy":            "",
-			"value_to_sell_f32":      float32(0),
-			"value_to_buy_f32":       float32(0),
-			"name":                   "",
-			"symbol":                 "",
-			"constant_reserve_ratio": uint32(0),
-			"initial_amount_f32":     float32(0),
-			"initial_reserve_f32":    float32(0),
-			"address":                "",
-			"pub_key":                "",
-			"commission":             uint32(0),
-			"stake_f32":              float32(0),
-			"raw_check":              "",
-			"proof":                  "",
-			"coin_13a":               []string{},
-			"to_13a":                 []string{},
-			"value_f32_13a":          []float32{},
-			"updated_date":           time.Now().Format("2006-01-02"),
-		}
+	stmt := sess.InsertInto("trx_data").Columns(
+		"hash",
+		"coin",
+		"to_adrs",
+		"value_f32",
+		"coin_to_sell",
+		"coin_to_buy",
+		"value_to_sell_f32",
+		"value_to_buy_f32",
+		"name",
+		"symbol",
+		"constant_reserve_ratio",
+		"initial_amount_f32",
+		"initial_reserve_f32",
+		"address",
+		"pub_key",
+		"commission",
+		"stake_f32",
+		"raw_check",
+		"proof",
+		"coin_13a",
+		"to_13a",
+		"value_f32_13a",
+		"updated_date")
+	for _, dt := range dtSlc.Transactions {
+		oneTrxDt := OneTrxData{}
 
 		switch dt.Type {
 		case ms.TX_SendData: //1
@@ -709,120 +223,109 @@ func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":      dt.Hash,
-				"coin":      dt0.Coin,
-				"to_adrs":   dt0.To,
-				"value_f32": dt0.Value,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.Coin = dt0.Coin
+			oneTrxDt.ToAddress = dt0.To
+			oneTrxDt.Value = dt0.Value
+
 		case ms.TX_SellCoinData: //2
 			dt0 := s.Tx2SellCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":              dt.Hash,
-				"coin_to_sell":      dt0.CoinToSell,
-				"coin_to_buy":       dt0.CoinToBuy,
-				"value_to_sell_f32": dt0.ValueToSell,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.CoinToSell = dt0.CoinToSell
+			oneTrxDt.CoinToBuy = dt0.CoinToBuy
+			oneTrxDt.ValueToSell = dt0.ValueToSell
+
 		case ms.TX_SellAllCoinData: //3
 			dt0 := s.Tx3SellAllCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":         dt.Hash,
-				"coin_to_sell": dt0.CoinToSell,
-				"coin_to_buy":  dt0.CoinToBuy,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.CoinToSell = dt0.CoinToSell
+			oneTrxDt.CoinToBuy = dt0.CoinToBuy
+
 		case ms.TX_BuyCoinData: //4
 			dt0 := s.Tx4BuyCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":             dt.Hash,
-				"coin_to_sell":     dt0.CoinToSell,
-				"coin_to_buy":      dt0.CoinToBuy,
-				"value_to_buy_f32": dt0.ValueToBuy,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.CoinToSell = dt0.CoinToSell
+			oneTrxDt.CoinToBuy = dt0.CoinToBuy
+			oneTrxDt.ValueToBuy = dt0.ValueToBuy
+
 		case ms.TX_CreateCoinData: //5
 			dt0 := s.Tx5CreateCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":                   dt.Hash,
-				"name":                   dt0.Name,
-				"symbol":                 dt0.CoinSymbol,
-				"constant_reserve_ratio": dt0.ConstantReserveRatio,
-				"initial_amount_f32":     dt0.InitialAmount,
-				"initial_reserve_f32":    dt0.InitialReserve,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.Name = dt0.Name
+			oneTrxDt.Symbol = dt0.CoinSymbol
+			oneTrxDt.CRR = uint32(dt0.ConstantReserveRatio)
+			oneTrxDt.InitAmount = dt0.InitialAmount
+			oneTrxDt.InitReserve = dt0.InitialReserve
+
 		case ms.TX_DeclareCandidacyData: //6
 			dt0 := s.Tx6DeclareCandidacyData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":       dt.Hash,
-				"coin":       dt0.Coin,
-				"address":    dt0.Address,
-				"pub_key":    dt0.PubKey,
-				"commission": dt0.Commission,
-				"stake_f32":  dt0.Stake,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.Coin = dt0.Coin
+			oneTrxDt.Address = dt0.Address
+			oneTrxDt.PubKey = dt0.PubKey
+			oneTrxDt.Commission = uint32(dt0.Commission)
+			oneTrxDt.Stake = dt0.Stake
+
 		case ms.TX_DelegateDate: //7
 			dt0 := s.Tx7DelegateDate{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":      dt.Hash,
-				"coin":      dt0.Coin,
-				"pub_key":   dt0.PubKey,
-				"stake_f32": dt0.Stake,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.Coin = dt0.Coin
+			oneTrxDt.PubKey = dt0.PubKey
+			oneTrxDt.Stake = dt0.Stake
+
 		case ms.TX_UnbondData: //8
 			dt0 := s.Tx8UnbondData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":      dt.Hash,
-				"coin":      dt0.Coin,
-				"value_f32": dt0.Value,
-				"pub_key":   dt0.PubKey,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.Coin = dt0.Coin
+			oneTrxDt.Value = dt0.Value
+			oneTrxDt.PubKey = dt0.PubKey
+
 		case ms.TX_RedeemCheckData: //9
 			dt0 := s.Tx9RedeemCheckData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":      dt.Hash,
-				"raw_check": dt0.RawCheck,
-				"proof":     dt0.Proof,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.RawCheck = dt0.RawCheck
+			oneTrxDt.Proof = dt0.Proof
+
 		case ms.TX_SetCandidateOnData: //10
 			dt0 := s.Tx10SetCandidateOnData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":    dt.Hash,
-				"pub_key": dt0.PubKey,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.PubKey = dt0.PubKey
+
 		case ms.TX_SetCandidateOffData: //11
 			dt0 := s.Tx11SetCandidateOffData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
 			json.Unmarshal(jsonBytes, &dt0)
 
-			m2 = map[string]interface{}{
-				"hash":    dt.Hash,
-				"pub_key": dt0.PubKey,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.PubKey = dt0.PubKey
+
 		case ms.TX_CreateMultisigData: //12
 			// TODO: Реализовать
 			/*dt0 := s.Tx12CreateMultisigData{}
@@ -845,52 +348,28 @@ func addTrxDataSqlArr(db *sqlx.DB, dtSlc *[]ms.TransResponse) bool {
 				v_a = append(v_a, dt1.Value)
 			}
 
-			m2 = map[string]interface{}{
-				"hash":          dt.Hash,
-				"coin_13a":      c_a,
-				"to_13a":        t_a,
-				"value_f32_13a": v_a,
-			}
+			oneTrxDt.Hash = dt.Hash
+			oneTrxDt.CoinArr = c_a
+			oneTrxDt.ToArr = t_a
+			oneTrxDt.ValueArr = v_a
+
 		case ms.TX_EditCandidateData: //14
 			// TODO: реализовать этап №14
 			log("WRN", "[sql_trx.go] addTrxDataSqlArr(ms.TX_EditCandidateData) - НЕ РЕАЛИЗОВАН!", "")
-			return false
+			continue
 		default:
 			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSqlArr(...) - неизвестный статус dt.Type - ", dt.Type), "")
-			return false
+			continue
 		}
 
-		for k, v := range m2 {
-			if _, ok := m2[k]; ok {
-				m1[k] = v
-			}
-		}
-
-		str1, err := mapReplace(str1, m1)
-		if err != nil {
-			log("ERR", fmt.Sprint("[sql_trx.go] addTrxSqlArr(mapReplace) - ", err), "")
-			return false
-		}
-		if len(*dtSlc) > 1 {
-			if iStp == 0 {
-				strValueAll = str1
-			} else {
-				strValueAll = fmt.Sprintf("%s, %s", strValueAll, str1)
-			}
-		} else {
-			strValueAll = str1
-		}
+		stmt.Record(oneTrxDt)
 
 	}
-
-	qPg_Tx2 := fmt.Sprintf(qPg_Tx, strValueAll)
-	tx.MustExec(qPg_Tx2)
-
-	err = tx.Commit()
+	_, err = stmt.Exec()
 	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSqlArr(Commit --> trx_data) - ", err), "")
+		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Exec) - ", err), "")
 		return false
 	}
-	log("INF", "INSERT", fmt.Sprint("trx_data amount=", len(*dtSlc)))
+	log("INF", "INSERT", fmt.Sprint("trx_data ", dtSlc.Hash))
 	return true
 }

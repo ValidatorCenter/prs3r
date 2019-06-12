@@ -13,9 +13,9 @@ import (
 	ms "github.com/ValidatorCenter/minter-go-sdk"
 	s "github.com/ValidatorCenter/prs3r/strc"
 
-	// SQL
-	"github.com/jmoiron/sqlx"
-	_ "github.com/kshvakov/clickhouse"
+	// SQL (mail.ru)
+	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 
 	// Redis
 	"github.com/go-redis/redis"
@@ -178,7 +178,7 @@ func initParser() {
 	//defer dbSys.Close() // рано закрывается(в конце этой функции), в итоге перенес в main
 	log("OK", "Подключились к БД - Redis", "")
 
-	dbSQL, err = sqlx.Open("clickhouse", secDB.Key("CLICKHOUSE_ADDRESS").String())
+	dbSQL, err = dbr.Open("clickhouse", secDB.Key("CLICKHOUSE_ADDRESS").String(), nil)
 	if err != nil {
 		log("ERR", fmt.Sprint("Подключение к БД - ClickHouse ", err), "")
 	}

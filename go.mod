@@ -16,7 +16,9 @@ require (
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/kshvakov/clickhouse v1.3.6 // indirect
+	github.com/mailru/dbr v3.0.0+incompatible // indirect
 	github.com/mailru/easyjson v0.0.0-20190403194419-1ea4449da983 // indirect
+	github.com/mailru/go-clickhouse v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b

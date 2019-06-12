@@ -47,7 +47,7 @@ func appBlocks() {
 	}
 
 	// получаем системуную коллекцию
-	st0 := srchSysSql(dbSys)
+	st0 := srchSysDb(dbSys)
 	log("INF", "INIT", fmt.Sprintf("Последний блок в БД: %d", st0.LatestBlockSave))
 	actN_block := st0.LatestBlockSave + 1 // загружаем следующий блок!
 
@@ -81,27 +81,12 @@ func appBlocks() {
 			continue
 		}
 
-		// Отправляем воркеру на отработку Блока (там - же: Транзакция и Валидаторы-пропуск)
+		// Отправляем воркеру на отработку Блока
 		worketInputBlock <- retBlck
-
-		// Цикл по транзакциям...
-		for _, retTrx := range retBlck.Transactions {
-			// нужно передовать ДатуБлока(+),НомерБлока(+) и тело одной транзакции(+)
-			if retTrx.Hash != "" {
-				oneTrxX := TrxExt{TransResponse: retTrx}
-				oneTrxX.Height = retBlck.Height // высота блока
-				oneTrxX.Created = retBlck.Time
-
-				worketInputTrx <- oneTrxX
-			}
-		}
-
-		// Цикл по валидаторам, проверка пропуска и запись в node_blockstory
-		for _, retB1node := range retBlck.Validators {
-			oneBlockNodeX := B1NExt{BlockValidatorsResponse: retB1node}
-			oneBlockNodeX.Height = uint32(retBlck.Height) // высота блока
-			worketInputBNode <- oneBlockNodeX
-		}
+		// Отправляем воркеру на отработку Транзакций блока
+		worketInputTrx <- retBlck
+		// Отправляем воркеру на отработку Валидаторов блока
+		worketInputBNode <- retBlck
 
 		// Обработка событий по номеру блока
 		worketInputBEvnt <- uint32(retBlck.Height)
