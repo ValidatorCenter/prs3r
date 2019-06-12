@@ -227,6 +227,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 		"to_13a",
 		"value_f32_13a",
 		"updated_date")
+
+	cntrlAmntTx := 0
 	for _, dt := range dtSlc.Transactions {
 		oneTrxDt := OneTrxData{}
 
@@ -243,6 +245,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.ToAddress = dt0.To
 			oneTrxDt.Value = dt0.Value
 
+			cntrlAmntTx++
+
 		case ms.TX_SellCoinData: //2
 			dt0 := s.Tx2SellCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -253,6 +257,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.CoinToBuy = dt0.CoinToBuy
 			oneTrxDt.ValueToSell = dt0.ValueToSell
 
+			cntrlAmntTx++
+
 		case ms.TX_SellAllCoinData: //3
 			dt0 := s.Tx3SellAllCoinData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -261,6 +267,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.Hash = dt.Hash
 			oneTrxDt.CoinToSell = dt0.CoinToSell
 			oneTrxDt.CoinToBuy = dt0.CoinToBuy
+
+			cntrlAmntTx++
 
 		case ms.TX_BuyCoinData: //4
 			dt0 := s.Tx4BuyCoinData{}
@@ -271,6 +279,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.CoinToSell = dt0.CoinToSell
 			oneTrxDt.CoinToBuy = dt0.CoinToBuy
 			oneTrxDt.ValueToBuy = dt0.ValueToBuy
+
+			cntrlAmntTx++
 
 		case ms.TX_CreateCoinData: //5
 			dt0 := s.Tx5CreateCoinData{}
@@ -284,6 +294,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.InitAmount = dt0.InitialAmount
 			oneTrxDt.InitReserve = dt0.InitialReserve
 
+			cntrlAmntTx++
+
 		case ms.TX_DeclareCandidacyData: //6
 			dt0 := s.Tx6DeclareCandidacyData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -296,6 +308,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.Commission = uint32(dt0.Commission)
 			oneTrxDt.Stake = dt0.Stake
 
+			cntrlAmntTx++
+
 		case ms.TX_DelegateDate: //7
 			dt0 := s.Tx7DelegateDate{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -305,6 +319,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.Coin = dt0.Coin
 			oneTrxDt.PubKey = dt0.PubKey
 			oneTrxDt.Stake = dt0.Stake
+
+			cntrlAmntTx++
 
 		case ms.TX_UnbondData: //8
 			dt0 := s.Tx8UnbondData{}
@@ -316,6 +332,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.Value = dt0.Value
 			oneTrxDt.PubKey = dt0.PubKey
 
+			cntrlAmntTx++
+
 		case ms.TX_RedeemCheckData: //9
 			dt0 := s.Tx9RedeemCheckData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -325,6 +343,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.RawCheck = dt0.RawCheck
 			oneTrxDt.Proof = dt0.Proof
 
+			cntrlAmntTx++
+
 		case ms.TX_SetCandidateOnData: //10
 			dt0 := s.Tx10SetCandidateOnData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -332,6 +352,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 
 			oneTrxDt.Hash = dt.Hash
 			oneTrxDt.PubKey = dt0.PubKey
+
+			cntrlAmntTx++
 
 		case ms.TX_SetCandidateOffData: //11
 			dt0 := s.Tx11SetCandidateOffData{}
@@ -341,6 +363,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.Hash = dt.Hash
 			oneTrxDt.PubKey = dt0.PubKey
 
+			cntrlAmntTx++
+
 		case ms.TX_CreateMultisigData: //12
 			// TODO: Реализовать
 			/*dt0 := s.Tx12CreateMultisigData{}
@@ -348,6 +372,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			json.Unmarshal(jsonBytes, &dt0)
 			qPg_TxDt = ``
 			m2 = map[string]interface{}{}*/
+			log("WRN", "[sql_trx.go] addTrxDataSql(ms.TX_CreateMultisigData) - НЕ РЕАЛИЗОВАН!", "")
+			continue
 		case ms.TX_MultisendData: //13
 			dt0 := s.Tx13MultisendData{}
 			jsonBytes, _ := json.Marshal(dt.Data)
@@ -368,6 +394,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			oneTrxDt.ToArr = t_a
 			oneTrxDt.ValueArr = v_a
 
+			cntrlAmntTx++
+
 		case ms.TX_EditCandidateData: //14
 			// TODO: реализовать этап №14
 			log("WRN", "[sql_trx.go] addTrxDataSql(ms.TX_EditCandidateData) - НЕ РЕАЛИЗОВАН!", "")
@@ -380,11 +408,18 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 		stmt.Record(oneTrxDt)
 
 	}
-	_, err = stmt.Exec()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Exec) - ", err), "")
-		return false
+
+	if cntrlAmntTx > 0 {
+
+		_, err = stmt.Exec()
+		if err != nil {
+			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Exec) - ", err), "")
+			return false
+		}
+		log("INF", "INSERT", fmt.Sprint("trx_data ", dtSlc.Hash))
+		return true
+	} else {
+		log("INF", "INSERT [0]!!", fmt.Sprint("trx_data ", dtSlc.Hash))
+		return true
 	}
-	log("INF", "INSERT", fmt.Sprint("trx_data ", dtSlc.Hash))
-	return true
 }
