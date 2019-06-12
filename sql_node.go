@@ -97,20 +97,21 @@ func addNodeBlockstorySql(db *dbr.Connection, dt *s.NodeExt) bool {
 }
 
 type OneNodeStake struct {
-	PubKey   string    `db:"pub_key"`
-	Owner    string    `db:"owner_address"`
-	Coin     string    `db:"coin"`
-	Value    float32   `db:"value_f32"`
-	ValueBip float32   `db:"bip_value_f32"`
-	Upd      time.Time `db:"updated_date"`
+	PubKey   string  `db:"pub_key"`
+	Owner    string  `db:"owner_address"`
+	Coin     string  `db:"coin"`
+	Value    float32 `db:"value_f32"`
+	ValueBip float32 `db:"bip_value_f32"`
+	Upd      string  `db:"updated_date"`
+	//Upd      time.Time `db:"updated_date"`
 }
 
 // Добавить о ноде стэк в SQL
 func addNodeStakeSql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
-	
-	dt.UpdYCH = time.Now().Format("2006-01-02")
-	
+
+	uTm := time.Now().Format("2006-01-02")
+
 	sess := db.NewSession(nil)
 	stmt := sess.InsertInto("node_stakes").Columns(
 		"pub_key",
@@ -127,7 +128,7 @@ func addNodeStakeSql(db *dbr.Connection, dt *s.NodeExt) bool {
 			Coin:     st1.Coin,
 			Value:    st1.Value,
 			ValueBip: st1.BipValue,
-			Upd:      time.Now(),
+			Upd:      uTm,
 		})
 	}
 
