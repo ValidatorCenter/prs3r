@@ -47,6 +47,9 @@ type OneBlockStory struct {
 // Добавить о ноде историю блоков в SQL
 func addNodeBlockstorySql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
+
+	// ! Проверка if len(...) в конце функции
+
 	chNAr := srchNodeBlockstory(db, dt.PubKey) // Для проверки на задвоенность блока для ноды
 
 	dt.UpdYCH = time.Now().Format("2006-01-02")
@@ -109,6 +112,11 @@ type OneNodeStake struct {
 // Добавить о ноде стэк в SQL
 func addNodeStakeSql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
+
+	if len(dt.Stakes) == 0 {
+		log("INF", "INSERT [0]!", fmt.Sprint("node_stakes ", dt.PubKey))
+		return true
+	}
 
 	uTm := time.Now().Format("2006-01-02")
 

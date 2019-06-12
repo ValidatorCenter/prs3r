@@ -106,6 +106,11 @@ type TrxEx struct {
 func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 	var err error
 
+	if len(dt.Transactions) == 0 {
+		log("INF", "INSERT [0]!", fmt.Sprint("trx ", dt.Hash))
+		return true
+	}
+
 	sess := db.NewSession(nil)
 
 	stmt := sess.InsertInto("trx").Columns(
@@ -190,6 +195,12 @@ type OneTrxData struct {
 // Добавить данные транзакций в SQL
 func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 	var err error
+
+	if len(dtSlc.Transactions) == 0 {
+		log("INF", "INSERT [0]!", fmt.Sprint("trx_data ", dtSlc.Hash))
+		return true
+	}
+
 	sess := db.NewSession(nil)
 
 	stmt := sess.InsertInto("trx_data").Columns(
@@ -359,10 +370,10 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 
 		case ms.TX_EditCandidateData: //14
 			// TODO: реализовать этап №14
-			log("WRN", "[sql_trx.go] addTrxDataSqlArr(ms.TX_EditCandidateData) - НЕ РЕАЛИЗОВАН!", "")
+			log("WRN", "[sql_trx.go] addTrxDataSql(ms.TX_EditCandidateData) - НЕ РЕАЛИЗОВАН!", "")
 			continue
 		default:
-			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSqlArr(...) - неизвестный статус dt.Type - ", dt.Type), "")
+			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(...) - неизвестный статус dt.Type - ", dt.Type), "")
 			continue
 		}
 

@@ -60,6 +60,12 @@ type OneBlockEvnt struct {
 // Добавить о блоке события в SQL
 func addBlcokEventSql(db *dbr.Connection, bHeight uint32, dt *ms.BlockEvResponse) {
 	var err error
+
+	if len(dt.Events) == 0 {
+		log("INF", "INSERT [0]!", fmt.Sprint("block_event ", bHeight))
+		return
+	}
+
 	sess := db.NewSession(nil)
 
 	stmt := sess.InsertInto("block_event").Columns(
@@ -109,6 +115,12 @@ type OneBlockValid struct {
 // Добавить о блоке валидаторов участвующих в SQL
 func addBlockValidSqlArr(db *dbr.Connection, dt *ms.BlockResponse) {
 	var err error
+
+	if len(dt.Validators) == 0 {
+		log("INF", "INSERT [0]!", fmt.Sprint("block_valid ", dt.Height))
+		return
+	}
+
 	sess := db.NewSession(nil)
 	stmt := sess.InsertInto("block_valid").Columns(
 		"height_i32",
