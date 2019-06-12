@@ -18,7 +18,7 @@ import (
 func addBlockSql(db *dbr.Connection, dt *s.BlockResponse2) bool {
 	var err error
 
-	dt.UpdYCH = time.Now()
+	dt.UpdYCH = time.Now().Format("2006-01-02")
 
 	sess := db.NewSession(nil)
 
@@ -53,7 +53,8 @@ type OneBlockEvnt struct {
 	Amount          float32   `db:"amount_f32"`
 	Coin            string    `db:"coin"`
 	ValidatorPubKey string    `db:"validator_pub_key"`
-	Upd             time.Time `db:"updated_date"`
+	Upd             string    `db:"updated_date"`
+	//Upd             time.Time `db:"updated_date"`
 }
 
 // Добавить о блоке события в SQL
@@ -72,6 +73,8 @@ func addBlcokEventSql(db *dbr.Connection, bHeight uint32, dt *ms.BlockEvResponse
 		"validator_pub_key",
 		"updated_date")
 
+	uTm := time.Now().Format("2006-01-02")
+
 	for _, st1 := range dt.Events {
 		// FIXME: реализовано по идее №2, жду когда будет №1 после исправление Даниила Лашина
 		stmt.Record(OneBlockEvnt{
@@ -83,7 +86,7 @@ func addBlcokEventSql(db *dbr.Connection, bHeight uint32, dt *ms.BlockEvResponse
 			Amount:          st1.Value.Amount,
 			Coin:            st1.Value.Coin,
 			ValidatorPubKey: st1.Value.ValidatorPubKey,
-			Upd:             time.Now(),
+			Upd:             uTm,
 		})
 	}
 
@@ -96,10 +99,11 @@ func addBlcokEventSql(db *dbr.Connection, bHeight uint32, dt *ms.BlockEvResponse
 }
 
 type OneBlockValid struct {
-	Height uint32    `db:"height_i32"`
-	PubKey string    `db:"pub_key"`
-	Signed bool      `db:"signed"`
-	Upd    time.Time `db:"updated_date"`
+	Height uint32 `db:"height_i32"`
+	PubKey string `db:"pub_key"`
+	Signed bool   `db:"signed"`
+	Upd    string `db:"updated_date"`
+	//Upd    time.Time `db:"updated_date"`
 }
 
 // Добавить о блоке валидаторов участвующих в SQL
@@ -112,7 +116,7 @@ func addBlockValidSqlArr(db *dbr.Connection, dt *ms.BlockResponse) {
 		"signed",
 		"updated_date")
 
-	uTm := time.Now()
+	uTm := time.Now().Format("2006-01-02")
 
 	for _, oneVld := range dt.Validators {
 		stmt.Record(OneBlockValid{
@@ -128,27 +132,3 @@ func addBlockValidSqlArr(db *dbr.Connection, dt *ms.BlockResponse) {
 		log("ERR", fmt.Sprint("[sql_block.go] addBlockValidSqlArr(Exec) - ", err), "")
 	}
 }
-
-/*
-func addBlockValidSql(db *dbr.Connection, bHeight uint32, dt *ms.BlockValidatorsResponse) {
-	sess := db.NewSession(nil)
-
-	stmt := sess.InsertInto("block_valid").Columns(
-		"height_i32",
-		"pub_key",
-		"signed",
-		"updated_date").Record(OneBlockValid{
-		Height: bHeight,
-		PubKey: dt.PubKey,
-		Signed: dt.Signed,
-		Upd:    time.Now(),
-	})
-
-	_, err = stmt.Exec()
-	if err != nil {
-		log("ERR", fmt.Sprint("[sql_block.go] addBlockValidSql(Exec) - ", err), "")
-		return
-	}
-
-	log("INF", "INSERT", fmt.Sprint("block_valid ", bHeight, "-", dt.PubKey))
-}*/

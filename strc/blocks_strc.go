@@ -27,7 +27,7 @@ type BlockResponse2 struct {
 	ValidatorAmnt int                          `json:"valid_amnt" db:"valid_amnt"`
 	Proposer      string                       `json:"proposer" bson:"proposer" gorm:"proposer" db:"proposer"` // PubKey пропозер блока
 	Events        []ms.BlockEventsResponse     `json:"events" bson:"events" gorm:"-" db:"-"`
-	UpdYCH        time.Time                    `json:"-" bson:"-" db:"updated_date"` // ClickHouse::UpdateDate
+	UpdYCH        string                       `json:"-" bson:"-" db:"updated_date"` // ClickHouse::UpdateDate
 }
 
 // для списка содержимого блока сойдет, можно еще меньше!
@@ -42,15 +42,15 @@ type TransResponseMin struct {
 
 // Структура - одного события в блоке (для SQL)
 type BlockEvent struct {
-	ID              string    `db:"_id"` // TODO: добавлен по необходимости
-	Height          int       `db:"height_i32"`
-	Type            string    `db:"type"`
-	Role            string    `db:"role"` //DAO,Developers,Validator,Delegator
-	Address         string    `db:"address"`
-	Amount          float32   `db:"amount_f32"`
-	Coin            string    `db:"coin"`
-	ValidatorPubKey string    `db:"validator_pub_key"`
-	UpdYCH          time.Time `db:"updated_date"` // ClickHouse::UpdateDate
+	ID              string  `db:"_id"` // TODO: добавлен по необходимости
+	Height          int     `db:"height_i32"`
+	Type            string  `db:"type"`
+	Role            string  `db:"role"` //DAO,Developers,Validator,Delegator
+	Address         string  `db:"address"`
+	Amount          float32 `db:"amount_f32"`
+	Coin            string  `db:"coin"`
+	ValidatorPubKey string  `db:"validator_pub_key"`
+	UpdYCH          string  `db:"updated_date"` // ClickHouse::UpdateDate
 }
 
 // Пользователи валидаторов с новой комиссией
@@ -60,7 +60,7 @@ type NodeUserX struct {
 	Start      time.Time `json:"start" db:"start"`           // дата старта
 	Finish     time.Time `json:"finish" db:"finish"`         // дата финиша
 	Commission int       `json:"commission" db:"commission"` // новая ставка комиссии
-	UpdYCH     time.Time `json:"-" db:"updated_date"`        // ClickHouse::UpdateDate
+	UpdYCH     string    `json:"-" db:"updated_date"`        // ClickHouse::UpdateDate
 }
 
 // Задачи для исполнения ноде
@@ -81,5 +81,5 @@ type NodeTodo struct {
 	Comment    string    `json:"comment" db:"comment"`       // комментарий
 	TxHash     string    `json:"tx_hash" db:"tx_hash"`       // транзакция исполнения
 	TxHashMin  string    `-`                                 // транзакция исполнения (сокращенная)
-	UpdYCH     time.Time `json:"-" db:"updated_date"`        // ClickHouse::UpdateDate
+	UpdYCH     string    `json:"-" db:"updated_date"`        // ClickHouse::UpdateDate
 }

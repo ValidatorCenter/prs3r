@@ -105,7 +105,7 @@ type CoinMarketCapData struct {
 	// всего монет выпущено
 	// UPDATE ликвидность движения всего купли/продажи монет за сутки
 	Transactions []CoinActionpData `json:"transactions" db:"-"` // движения
-	UpdYCH       time.Time         `json:"-" db:"updated_date"` // ClickHouse::UpdateDate
+	UpdYCH       string            `json:"-" db:"updated_date"` // ClickHouse::UpdateDate
 }
 
 // Движение монеты
@@ -119,7 +119,7 @@ type CoinActionpData struct {
 	ValueToSell float32   `json:"value_to_sell_f32" db:"value_to_sell_f32"` // Количество продано
 	Price       float32   `json:"price_f32" db:"price_f32"`                 // Цена
 	Volume      float32   `json:"volume_f32" db:"volume_f32"`               // Объем
-	UpdYCH      time.Time `json:"-" db:"updated_date"`                      // ClickHouse::UpdateDate
+	UpdYCH      string    `json:"-" db:"updated_date"`                      // ClickHouse::UpdateDate
 }
 
 // Информация о паре монет

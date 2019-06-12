@@ -1,8 +1,8 @@
 package strc
 
-import (
+/*import (
 	"time"
-)
+)*/
 
 // Статус базы данных
 type StatusDB struct {
@@ -14,11 +14,11 @@ type StatusDB struct {
 
 // Настройки Автоделегирования для кошелька
 type AutodelegCfg struct {
-	Address   string    `json:"address" db:"address"`
-	PubKey    string    `json:"pub_key" db:"pub_key"`
-	Coin      string    `json:"coin" db:"coin"`
-	WalletPrc int       `json:"wallet_prc" db:"wallet_prc"`
-	UpdYCH    time.Time `json:"-" bson:"-" db:"updated_date"` // ClickHouse::UpdateDate
-	VerYCH    int       `json:"-" bson:"-" db:"version"`      // ClickHouse::Version
+	Address   string `json:"address" db:"address"`
+	PubKey    string `json:"pub_key" db:"pub_key"`
+	Coin      string `json:"coin" db:"coin"`
+	WalletPrc int    `json:"wallet_prc" db:"wallet_prc"`
+	UpdYCH    string `json:"-" bson:"-" db:"updated_date"` // ClickHouse::UpdateDate
+	VerYCH    int    `json:"-" bson:"-" db:"version"`      // ClickHouse::Version
 
 }

@@ -15,6 +15,8 @@ import (
 func addNodeSql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
 
+	dt.UpdYCH = time.Now().Format("2006-01-02")
+
 	sess := db.NewSession(nil)
 	stmt := sess.InsertInto("nodes").Columns(
 		"pub_key",
@@ -46,6 +48,9 @@ type OneBlockStory struct {
 func addNodeBlockstorySql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
 	chNAr := srchNodeBlockstory(db, dt.PubKey) // Для проверки на задвоенность блока для ноды
+
+	dt.UpdYCH = time.Now().Format("2006-01-02")
+
 	sess := db.NewSession(nil)
 	stmt := sess.InsertInto("node_blockstory").Columns(
 		"pub_key",
@@ -103,6 +108,9 @@ type OneNodeStake struct {
 // Добавить о ноде стэк в SQL
 func addNodeStakeSql(db *dbr.Connection, dt *s.NodeExt) bool {
 	var err error
+	
+	dt.UpdYCH = time.Now().Format("2006-01-02")
+	
 	sess := db.NewSession(nil)
 	stmt := sess.InsertInto("node_stakes").Columns(
 		"pub_key",

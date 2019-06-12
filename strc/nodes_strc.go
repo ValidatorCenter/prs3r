@@ -47,7 +47,7 @@ type NodeExt struct {
 	AmntSlashed      int           `json:"amnt_slashed" db:"amnt_slashed"`           // количество штрафов, полный список по запросу из транзакций
 	AmnNoBlocks      int           `-`                                               // количество пропущенных блоков
 	AmntSlots        int           `json:"amnt_slots" db:"amnt_slots"`               // количество занятых слотов это количество уникальных объектов в Stakes
-	UpdYCH           time.Time     `json:"-" db:"updated_date"`                      // ClickHouse::UpdateDate
+	UpdYCH           string        `json:"-" db:"updated_date"`                      // ClickHouse::UpdateDate
 }
 
 type BlocksStory struct {

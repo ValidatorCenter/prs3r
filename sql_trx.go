@@ -95,10 +95,11 @@ func returnAmntDataTx(txType int, txData interface{}) float32 {
 
 type TrxEx struct {
 	ms.TransResponse
-	TxReturn     float32   `json:"tags_return" db:"tags_return"`
-	TxSellAmount float32   `json:"tags_sellamnt" db:"tags_sellamnt"`
-	AmountBip    float32   `json:"amount_bip_f32" db:"amount_bip_f32"`
-	Upd          time.Time `json:"updated_date" db:"updated_date"`
+	TxReturn     float32 `json:"tags_return" db:"tags_return"`
+	TxSellAmount float32 `json:"tags_sellamnt" db:"tags_sellamnt"`
+	AmountBip    float32 `json:"amount_bip_f32" db:"amount_bip_f32"`
+	Upd          string  `json:"updated_date" db:"updated_date"`
+	//Upd          time.Time `json:"updated_date" db:"updated_date"`
 }
 
 // Добавить транзакции блока в SQL
@@ -144,7 +145,7 @@ func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 		o1.Code = oneTrx.Code
 		o1.Log = oneTrx.Log
 		o1.AmountBip = returnAmntDataTx(oneTrx.Type, oneTrx.Data)
-		o1.Upd = time.Now()
+		o1.Upd = time.Now().Format("2006-01-02")
 
 		stmt.Record(o1)
 	}
@@ -182,7 +183,8 @@ type OneTrxData struct {
 	CoinArr     []string  `db:"coin_13a"`
 	ToArr       []string  `db:"to_13a"`
 	ValueArr    []float32 `db:"value_f32_13a"`
-	Upd         time.Time `db:"updated_date"`
+	Upd         string    `db:"updated_date"`
+	//Upd         time.Time `db:"updated_date"`
 }
 
 // Добавить данные транзакций в SQL
@@ -216,6 +218,8 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 		"updated_date")
 	for _, dt := range dtSlc.Transactions {
 		oneTrxDt := OneTrxData{}
+
+		oneTrxDt.Upd = time.Now().Format("2006-01-02")
 
 		switch dt.Type {
 		case ms.TX_SendData: //1
