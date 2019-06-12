@@ -159,7 +159,7 @@ func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 	_, err = stmt.Exec()
 	if err != nil {
 		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSql(Exec) - ", err), "")
-		panic(err)
+		//panic(err)
 		return false
 	}
 
@@ -406,6 +406,20 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(...) - неизвестный статус dt.Type - ", dt.Type), "")
 			continue
 		}
+
+		// FIXME: https://github.com/mailru/dbr/blob/master/interpolate.go#L153
+		// NO! support zero-length slice
+		//+ time-fix
+		if len(oneTrxDt.CoinArr) == 0 {
+			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "")
+		}
+		if len(oneTrxDt.ToArr) == 0 {
+			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "")
+		}
+		if len(oneTrxDt.ValueArr) == 0 {
+			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(0))
+		}
+		//-
 
 		stmt.Record(oneTrxDt)
 
