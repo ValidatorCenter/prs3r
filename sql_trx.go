@@ -95,6 +95,7 @@ func returnAmntDataTx(txType int, txData interface{}) float32 {
 
 type TrxEx struct {
 	ms.TransResponse
+	FromAdrs     string  `json:"from_adrs" db:"from_adrs"`
 	TxReturn     float32 `json:"tags_return" db:"tags_return"`
 	TxSellAmount float32 `json:"tags_sellamnt" db:"tags_sellamnt"`
 	AmountBip    float32 `json:"amount_bip_f32" db:"amount_bip_f32"`
@@ -138,7 +139,7 @@ func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 		o1.RawTx = oneTrx.RawTx
 		o1.Height = oneTrx.Height
 		o1.Index = oneTrx.Index
-		o1.From = oneTrx.From
+		o1.FromAdrs = oneTrx.From
 		o1.Nonce = oneTrx.Nonce
 		o1.GasPrice = oneTrx.GasPrice
 		o1.GasCoin = oneTrx.GasCoin
@@ -158,6 +159,7 @@ func addTrxSql(db *dbr.Connection, dt *ms.BlockResponse) bool {
 	_, err = stmt.Exec()
 	if err != nil {
 		log("ERR", fmt.Sprint("[sql_trx.go] addTrxSql(Exec) - ", err), "")
+		panic(err)
 		return false
 	}
 
