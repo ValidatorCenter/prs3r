@@ -411,18 +411,20 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 		// NO! support zero-length slice
 		//+ time-fix
 		if len(oneTrxDt.CoinArr) == 0 {
-			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "")
-			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "")
+			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "a")
+			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "b")
 		}
 		if len(oneTrxDt.ToArr) == 0 {
-			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "")
-			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "")
+			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "a")
+			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "b")
 		}
 		if len(oneTrxDt.ValueArr) == 0 {
-			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(0))
-			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(0))
+			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(1))
+			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(2))
 		}
 		//-
+
+		fmt.Printf("%#v\n", oneTrxDt)
 
 		stmt.Record(oneTrxDt)
 
@@ -432,7 +434,7 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 
 		_, err = stmt.Exec()
 		if err != nil {
-			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Exec) - ", err), "")
+			log("ERR", fmt.Sprint("[sql_trx.go] addTrxDataSql(Exec) - [", cntrlAmntTx, "] ", err), "")
 			return false
 		}
 		log("INF", "INSERT", fmt.Sprint("trx_data ", dtSlc.Hash))
