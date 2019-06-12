@@ -412,11 +412,14 @@ func addTrxDataSql(db *dbr.Connection, dtSlc *ms.BlockResponse) bool {
 		//+ time-fix
 		if len(oneTrxDt.CoinArr) == 0 {
 			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "")
+			oneTrxDt.CoinArr = append(oneTrxDt.CoinArr, "")
 		}
 		if len(oneTrxDt.ToArr) == 0 {
 			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "")
+			oneTrxDt.ToArr = append(oneTrxDt.ToArr, "")
 		}
 		if len(oneTrxDt.ValueArr) == 0 {
+			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(0))
 			oneTrxDt.ValueArr = append(oneTrxDt.ValueArr, float32(0))
 		}
 		//-
