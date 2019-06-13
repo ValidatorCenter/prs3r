@@ -87,7 +87,6 @@ func appBlocks() {
 		worketInputTrx <- retBlck
 		// Отправляем воркеру на отработку Валидаторов блока
 		worketInputBNode <- retBlck
-
 		// Обработка событий по номеру блока
 		worketInputBEvnt <- uint32(retBlck.Height)
 
